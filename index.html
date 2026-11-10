@@ -27,7 +27,7 @@ const LINKS = {
   thesisPdf: "",                          // e.g. a GitHub release asset of the PDF
   code:      "https://github.com/RebeccaCeccatelli/music_EBT",
   // Interactive demo. Hosted = the public gradio.live link printed by
-  // `bash demo/launch_demo.sh --share`; it lives 72 hours from `hostedStarted`.
+  // `bash demo/launch_demo.sh --share`; it lives up to 7 days from `demoHostedStarted` (while the demo keeps running).
   demoHosted:        "",                  // e.g. "https://0123abcd4567.gradio.live"
   demoHostedStarted: "",                  // when it was launched, e.g. "2026-11-12T14:00:00+01:00"
   demoLocal: "http://localhost:7860",
@@ -307,10 +307,10 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: 
     document.querySelector('.cta [data-link="thesisPdf"] [data-label]').textContent = "Thesis · coming soon";
   }
 
-  // Interactive demo: a hosted gradio.live link is valid for 72 hours.
+  // Interactive demo: a hosted gradio.live link is valid for up to 7 days (Gradio 6: "up to 1 week, best effort").
   const badge = document.getElementById("demo-badge"), note = document.getElementById("demo-note"), hosted = document.getElementById("demo-hosted");
   const started = L.demoHostedStarted ? new Date(L.demoHostedStarted) : null;
-  const until = started && !isNaN(started) ? new Date(started.getTime() + 72 * 3600e3) : null;
+  const until = started && !isNaN(started) ? new Date(started.getTime() + 7 * 24 * 3600e3) : null;
   if (L.demoHosted && (!until || until > new Date())) {
     hosted.href = L.demoHosted;
     badge.className = "badge live"; badge.textContent = "Live";
