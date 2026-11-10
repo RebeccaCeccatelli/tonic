@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tonic · Symbolic Music Generation with Energy-Based Transformers</title>
-<meta name="description" content="Tonic: controllable symbolic music generation with Energy-Based Transformers. Master's thesis (ETH Zürich × MIT Media Lab): showcase, interactive demo, listening archive, listening study, thesis and code.">
+<meta name="description" content="Tonic: controllable symbolic music generation with Energy-Based Transformers. Master's thesis (ETH Zürich × MIT Media Lab): showcase, interactive demo, listening archive, listening survey, thesis and code.">
 <meta name="theme-color" content="#08080f">
 <meta property="og:title" content="Tonic · Symbolic Music Generation with Energy-Based Transformers">
 <meta property="og:description" content="Listen, play, read: everything from the Tonic master's thesis in one place.">
@@ -21,10 +21,9 @@
 const LINKS = {
   showcase:  "https://rebeccaceccatelli.github.io/music_EBT/",
   archive:   "https://rebeccaceccatelli.github.io/listening-archive/",
-  // Netlify for now (the live study); GitHub copy: https://rebeccaceccatelli.github.io/listening-study/survey/
+  // Netlify for now (the live survey); GitHub copy: https://rebeccaceccatelli.github.io/listening-study/survey/
   surveyEn:  "https://ebt-music-listening-study.netlify.app/survey/",
   surveyIt:  "https://ebt-music-listening-study.netlify.app/survey/it/",
-  surveyCloses: "2026-11-11",            // after this date the card reads "closed"
   thesisPdf: "",                          // e.g. a GitHub release asset of the PDF
   code:      "https://github.com/RebeccaCeccatelli/music_EBT",
   // Interactive demo. Hosted = the public gradio.live link printed by
@@ -34,9 +33,9 @@ const LINKS = {
   demoLocal: "http://localhost:7860",
   // Where the sites themselves are kept
   repos: {
-    "Showcase & code": "https://github.com/RebeccaCeccatelli/music_EBT",
+    "Code, demo & showcase": "https://github.com/RebeccaCeccatelli/music_EBT",
     "Listening Archive": "https://github.com/RebeccaCeccatelli/listening-archive",
-    "Listening Study": "https://github.com/RebeccaCeccatelli/listening-study",
+    "Survey": "https://github.com/RebeccaCeccatelli/listening-study",
     "This page": "https://github.com/RebeccaCeccatelli/tonic",
   },
 };
@@ -106,27 +105,27 @@ section.block { padding: 48px 0 18px; }
 .shead { display: flex; align-items: baseline; gap: 16px; margin-bottom: 22px; }
 .shead .num { font: 600 13px var(--mono); color: var(--violet); }
 .shead h2 { margin: 0; font: 800 clamp(26px, 3.4vw, 36px)/1.1 var(--font); letter-spacing: -.03em; }
-.shead p { margin: 0 0 0 auto; color: var(--faint); font-size: 14px; text-align: right; max-width: 40ch; }
+.shead p { margin: 0 0 0 auto; color: var(--faint); font-size: 14px; text-align: right; max-width: 56ch; }
 @media (max-width: 720px) { .shead { flex-wrap: wrap; } .shead p { margin: 0; text-align: left; flex-basis: 100%; } }
 
-.grid { display: grid; gap: 18px; grid-template-columns: repeat(12, 1fr); }
-.card { --c: var(--violet); position: relative; grid-column: span 4; min-width: 0; padding: 26px; border-radius: var(--r); background: var(--card);
+.grid { display: grid; gap: 18px; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr; }
+.card { --c: var(--violet); position: relative; min-width: 0; min-height: var(--card-h, 0); padding: 26px; border-radius: var(--r); background: var(--card);
   border: 1px solid var(--line); backdrop-filter: blur(14px); display: flex; flex-direction: column; gap: 14px; overflow: hidden;
   transition: transform .22s, border-color .22s, box-shadow .22s; }
 .card::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .3s;
   background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--c) 18%, transparent), transparent 60%); }
 .card:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--c) 55%, transparent); box-shadow: 0 24px 60px -30px var(--c); }
 .card:hover::before { opacity: 1; }
-.card.wide { grid-column: span 8; }
-.card.half { grid-column: span 6; }
-@media (max-width: 960px) { .card, .card.wide, .card.half { grid-column: span 12; } }
+@media (max-width: 860px) { .grid { grid-template-columns: minmax(0, 1fr); grid-auto-rows: auto; } }
+/* Every card: header, text (takes the spare height), then its extras and link pinned to the bottom */
+.card .body { flex: 1; }
 .card .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .ico { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; flex: none;
   background: color-mix(in srgb, var(--c) 16%, transparent); border: 1px solid color-mix(in srgb, var(--c) 40%, transparent); color: var(--c); }
 .ico svg { width: 24px; height: 24px; }
 .card h3 { margin: 4px 0 0; font: 700 22px/1.2 var(--font); letter-spacing: -.02em; }
 .card p { margin: 0; color: var(--muted); font-size: 15px; }
-.card .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 6px; }
+.card .meta { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { font: 500 12px/1 var(--mono); padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line2); color: var(--muted); white-space: nowrap; }
 .stat { font: 800 34px/1 var(--font); letter-spacing: -.03em; color: var(--text); }
 .stat small { font: 500 13px var(--font); color: var(--faint); letter-spacing: 0; margin-left: 6px; }
@@ -137,12 +136,12 @@ section.block { padding: 48px 0 18px; }
 .badge.soon { color: var(--amber); background: rgba(240, 185, 85, .1); }
 .badge.off { color: var(--faint); background: rgba(255, 255, 255, .05); }
 @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(76, 211, 154, .6) } 80%, 100% { box-shadow: 0 0 0 9px rgba(76, 211, 154, 0) } }
-.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .actions .btn { padding: 10px 15px; font-size: 14px; border-radius: 10px; }
 .card a.cover { position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
 .card a.cover:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
 .card .actions, .card .actions a { position: relative; z-index: 2; }
-.go { font: 600 14px var(--font); color: var(--c); margin-top: auto; display: inline-flex; align-items: center; gap: 6px; }
+.go { font: 600 14px var(--font); color: var(--c); display: inline-flex; align-items: center; gap: 6px; }
 .go::after { content: "→"; transition: transform .2s; }
 .card:hover .go::after { transform: translateX(4px); }
 .note { font-size: 13px; color: var(--faint); }
@@ -213,18 +212,18 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: 
   <section class="block wrap" id="listen">
     <div class="shead reveal"><span class="num">01</span><h2>Listen &amp; play</h2><p>Hear what the models write, then try it yourself.</p></div>
     <div class="grid">
-      <article class="card wide reveal" style="--c: var(--violet)">
+      <article class="card reveal" style="--c: var(--violet)">
         <a class="cover" data-link="showcase" href="#" aria-label="Open the showcase"></a>
         <div class="top"><div class="ico"><svg><use href="#i-notes"/></svg></div><span class="badge live">Online</span></div>
-        <div><h3>Showcase</h3><p>Hand-picked listening examples: the EBT next to Llama and GPT-2 continuing the same piece, and steered softer or louder, shorter or longer, lower or higher.</p></div>
+        <div class="body"><h3>Showcase</h3><p>Hand-picked listening examples: the EBT next to Llama and GPT-2 continuing the same piece, and steered softer or louder, shorter or longer, lower or higher.</p></div>
         <div class="mini"><canvas id="mini" aria-hidden="true"></canvas></div>
-        <div class="meta"><span class="chip">Unguided generation</span><span class="chip">Single-attribute control</span><span class="chip">Combined control</span><span class="chip">Pushing too hard</span></div>
+        <div class="meta"><span class="chip">Unguided</span><span class="chip">Single control</span><span class="chip">Combined control</span><span class="chip">Pushing too hard</span></div>
         <span class="go">Open the showcase</span>
       </article>
 
       <article class="card reveal" style="--c: var(--coral)" id="demo-card">
         <div class="top"><div class="ico"><svg><use href="#i-sliders"/></svg></div><span class="badge off" id="demo-badge">Run it locally</span></div>
-        <div><h3>Interactive demo</h3><p>Generate music live: pick a prompt and a model, then steer the EBT yourself.</p></div>
+        <div class="body"><h3>Interactive demo</h3><p>Generate music live: pick a prompt and a model, then steer the EBT yourself.</p></div>
         <p class="note" id="demo-note">No hosted session right now. Start one with <code>bash demo/launch_demo.sh --share</code>.</p>
         <div class="actions">
           <a class="btn" id="demo-hosted" href="#" style="--c: var(--coral)" target="_blank" rel="noopener"><svg><use href="#i-globe"/></svg>Open hosted demo</a>
@@ -232,17 +231,17 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: 
         </div>
       </article>
 
-      <article class="card half reveal" style="--c: var(--cyan)">
+      <article class="card reveal" style="--c: var(--cyan)">
         <a class="cover" data-link="archive" href="#" aria-label="Open the Listening Archive"></a>
         <div class="top"><div class="ico"><svg><use href="#i-disc"/></svg></div><span class="badge live">Online</span></div>
-        <div><h3>Listening Archive</h3><p>Every clip from the final experiments, with its measurements: unguided generation, and single- and combined-attribute control for every technique and strength.</p></div>
+        <div class="body"><h3>Listening Archive</h3><p>Every clip from the final experiments, with its measurements: unguided generation, and single- and combined-attribute control for every technique and strength.</p></div>
         <div class="stat">20,441<small>clips</small></div>
         <span class="go">Browse the archive</span>
       </article>
 
-      <article class="card half reveal" style="--c: var(--green)" id="study-card">
+      <article class="card reveal" style="--c: var(--green)" id="study-card">
         <div class="top"><div class="ico"><svg><use href="#i-head"/></svg></div><span class="badge live" id="study-badge">Open</span></div>
-        <div><h3>Listening study</h3><p id="study-text">A short blind listening test: which continuation sounds more musical, and did the steering work? Your answers help evaluate the models.</p></div>
+        <div class="body"><h3>Take part in the survey</h3><p id="study-text">A short blind listening test: which continuation sounds more musical, and did the steering work? Answers are always welcome and help evaluate the models.</p></div>
         <div class="actions">
           <a class="btn" data-link="surveyEn" href="#" style="--c: var(--green)" target="_blank" rel="noopener"><svg><use href="#i-head"/></svg>Take it in English</a>
           <a class="btn" data-link="surveyIt" href="#" style="--c: var(--green)" target="_blank" rel="noopener">In italiano</a>
@@ -254,16 +253,16 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: 
   <section class="block wrap" id="read">
     <div class="shead reveal"><span class="num">02</span><h2>Read &amp; build</h2><p>The full write-up, and everything needed to reproduce it.</p></div>
     <div class="grid">
-      <article class="card half reveal" style="--c: var(--cyan)">
+      <article class="card reveal" style="--c: var(--cyan)">
         <a class="cover" data-link="thesisPdf" href="#" aria-label="Open the thesis PDF"></a>
         <div class="top"><div class="ico"><svg><use href="#i-pdf"/></svg></div><span class="badge soon" id="thesis-badge">Coming soon</span></div>
-        <div><h3>Thesis</h3><p>Method, experiments and results: how energy-based refinement makes inference-time control possible, and where it beats or ties the autoregressive baselines.</p></div>
+        <div class="body"><h3>Thesis</h3><p>Method, experiments and results: how energy-based refinement makes inference-time control possible, and where it beats or ties the autoregressive baselines.</p></div>
         <span class="go" id="thesis-go">PDF available after submission</span>
       </article>
-      <article class="card half reveal" style="--c: #c9c6ff">
+      <article class="card reveal" style="--c: #c9c6ff">
         <a class="cover" data-link="code" href="#" aria-label="Open the code repository"></a>
         <div class="top"><div class="ico"><svg><use href="#i-code"/></svg></div><span class="badge live">Public</span></div>
-        <div><h3>Code</h3><p>Training, inference and guidance for the EBT and the Llama / GPT-2 baselines on REMI and Anticipation tokens, plus the evaluation, the demo and these sites.</p></div>
+        <div class="body"><h3>Code</h3><p>Training, inference and guidance for the EBT and the Llama / GPT-2 baselines on REMI and Anticipation tokens, plus the evaluation, the demo and these sites.</p></div>
         <div class="meta"><span class="chip">PyTorch</span><span class="chip">REMI</span><span class="chip">Anticipation</span><span class="chip">Gradio</span></div>
         <span class="go">View on GitHub</span>
       </article>
@@ -321,20 +320,22 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: 
     if (L.demoHosted) { badge.className = "badge off"; badge.textContent = "Session ended"; note.innerHTML = `The last hosted session ended ${fmt(until)}. Run it locally, or start a new one with <code>bash demo/launch_demo.sh --share</code>.`; }
   }
 
-  // Listening study: open until the closing date, then closed.
-  const closes = L.surveyCloses ? new Date(L.surveyCloses + "T23:59:59") : null;
-  if (closes && closes < new Date()) {
-    const b = document.getElementById("study-badge"); b.className = "badge off"; b.textContent = "Closed";
-    document.getElementById("study-text").textContent = "The blind listening test used to evaluate the models. Responses are closed; you can still take it to see what participants heard, and the results are in the thesis.";
-  } else if (closes) {
-    document.getElementById("study-badge").textContent = `Open until ${closes.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`;
-  }
-
   // Repos
   const ghIcon = '<svg><use href="#i-gh"/></svg>';
   document.getElementById("repos").innerHTML = Object.entries(L.repos || {})
     .map(([name, url]) => `<a href="${url}" target="_blank" rel="noopener">${ghIcon}${name}</a>`).join("");
   document.getElementById("updated").textContent = `Page last updated ${new Date(document.lastModified).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}`;
+
+  // All cards on the page share one height (the tallest), in both sections, when they sit side by side
+  const cards = [...document.querySelectorAll(".card")];
+  const equalize = () => {
+    document.documentElement.style.removeProperty("--card-h");
+    if (!matchMedia("(min-width: 861px)").matches) return;
+    const h = Math.max(...cards.map((c) => c.offsetHeight));
+    document.documentElement.style.setProperty("--card-h", `${h}px`);
+  };
+  equalize(); addEventListener("resize", equalize); addEventListener("load", equalize);
+  if (document.fonts) document.fonts.ready.then(equalize);
 
   // Card spotlight follows the pointer
   document.querySelectorAll(".card").forEach((c) => c.addEventListener("pointermove", (e) => {

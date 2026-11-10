@@ -1,7 +1,7 @@
 # Tonic
 
 Front page for the Tonic master's thesis (*Towards Controllable Symbolic Music Generation with Energy-Based
-Transformers*, ETH Zürich × MIT Media Lab): showcase, interactive demo, Listening Archive, listening study,
+Transformers*, ETH Zürich × MIT Media Lab): showcase, interactive demo, Listening Archive, listening survey,
 thesis and code.
 
 Live: https://rebeccaceccatelli.github.io/tonic/
@@ -16,4 +16,4 @@ commit; GitHub Pages republishes within a minute.
   (e.g. `"2026-11-12T14:00:00+01:00"`). The card shows "Live until …" and switches itself off when it expires.
 - **Thesis:** put the PDF's URL in `thesisPdf` (for example a release asset of this repo); the "coming soon"
   labels turn into links.
-- **Listening study:** `surveyCloses` sets the date after which the card reads "Closed".
+- **Survey:** the card says "Open" and has no closing date (answers are always welcome).
