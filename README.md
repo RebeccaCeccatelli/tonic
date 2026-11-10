@@ -1,7 +1,7 @@
 # Tonic
 
 Front page for the Tonic master's thesis (*Towards Controllable Symbolic Music Generation with Energy-Based
-Transformers*, ETH Zürich × MIT Media Lab): showcase, interactive demo, Listening Archive, listening survey,
+Transformers*, MIT Media Lab × ETH Zürich): showcase, interactive demo, Listening Archive, listening survey,
 thesis and code.
 
 Live: https://rebeccaceccatelli.github.io/tonic/

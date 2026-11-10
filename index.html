@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tonic · Symbolic Music Generation with Energy-Based Transformers</title>
-<meta name="description" content="Tonic: controllable symbolic music generation with Energy-Based Transformers. Master's thesis (ETH Zürich × MIT Media Lab): showcase, interactive demo, listening archive, listening survey, thesis and code.">
+<meta name="description" content="Tonic: controllable symbolic music generation with Energy-Based Transformers. Master's thesis (MIT Media Lab × ETH Zürich): showcase, interactive demo, listening archive, listening survey, thesis and code.">
 <meta name="theme-color" content="#08080f">
 <meta property="og:title" content="Tonic · Symbolic Music Generation with Energy-Based Transformers">
 <meta property="og:description" content="Listen, play, read: everything from the Tonic master's thesis in one place.">
@@ -21,9 +21,9 @@
 const LINKS = {
   showcase:  "https://rebeccaceccatelli.github.io/music_EBT/",
   archive:   "https://rebeccaceccatelli.github.io/listening-archive/",
-  // Netlify for now (the live survey); GitHub copy: https://rebeccaceccatelli.github.io/listening-study/survey/
-  surveyEn:  "https://ebt-music-listening-study.netlify.app/survey/",
-  surveyIt:  "https://ebt-music-listening-study.netlify.app/survey/it/",
+  // GitHub Pages copy of the survey (the Netlify copy at ebt-music-listening-study.netlify.app stays up for now)
+  surveyEn:  "https://rebeccaceccatelli.github.io/listening-study/survey/",
+  surveyIt:  "https://rebeccaceccatelli.github.io/listening-study/survey/it/",
   thesisPdf: "",                          // e.g. a GitHub release asset of the PDF
   code:      "https://github.com/RebeccaCeccatelli/music_EBT",
   // Interactive demo. Hosted = the public gradio.live link printed by
@@ -81,6 +81,7 @@ h1 { margin: 26px 0 0; font: 900 clamp(84px, 17vw, 188px)/.86 var(--font); lette
 .lede b { color: var(--text); font-weight: 600; }
 .byline { margin: 26px 0 0; display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 14px; color: var(--muted); }
 .byline b { color: var(--text); font-weight: 600; }
+.byline .who { flex-basis: 100%; }
 .byline span { white-space: nowrap; }
 @media (max-width: 720px) {
   .byline span { white-space: normal; }
@@ -190,12 +191,12 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: 
   <canvas id="roll" aria-hidden="true"></canvas>
   <div class="glow a" aria-hidden="true"></div><div class="glow b" aria-hidden="true"></div>
   <div class="wrap">
-    <span class="eyebrow"><i></i>Master's thesis · ETH Zürich × MIT Media Lab · 2026</span>
+    <span class="eyebrow"><i></i>Master's thesis · MIT Media Lab × ETH Zürich · 2026</span>
     <h1>Tonic</h1>
     <p class="thesis-title">Towards Controllable Symbolic Music Generation with Energy-Based Transformers</p>
     <p class="lede">An <b>Energy-Based Transformer</b> that writes music by refining its guesses, and can be <b>steered</b> toward louder, longer or higher notes at generation time, compared with <b>Llama</b> and <b>GPT-2</b> baselines.</p>
     <div class="byline">
-      <span><b>Rebecca Ceccatelli</b></span>
+      <span class="who"><b>Rebecca Ceccatelli</b></span>
       <span>Supervised by Prof. Dr. Roger Wattenhofer (ETH Zürich) · Prof. Joseph A. Paradiso (MIT)</span>
       <span>Advised by Lancelot Blanchard (MIT)</span>
     </div>
@@ -275,7 +276,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: 
 
 <footer>
   <div class="wrap">
-    <span>Tonic · Rebecca Ceccatelli · ETH Zürich × MIT Media Lab, 2026</span>
+    <span>Tonic · Rebecca Ceccatelli · MIT Media Lab × ETH Zürich, 2026</span>
     <span id="updated"></span>
   </div>
 </footer>
