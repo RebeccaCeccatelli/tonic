@@ -24,6 +24,7 @@ const LINKS = {
   // GitHub Pages copy of the survey (the Netlify copy at ebt-music-listening-study.netlify.app stays up for now)
   surveyEn:  "https://rebeccaceccatelli.github.io/listening-study/survey/",
   surveyIt:  "https://rebeccaceccatelli.github.io/listening-study/survey/it/",
+  howItWorks:    "how-it-works/",          // the plain-words explainer in this repo
   surveyResults: "survey-results/",        // the results page in this repo
   thesisPdf: "",                          // e.g. a GitHub release asset of the PDF
   code:      "https://github.com/RebeccaCeccatelli/music_EBT",
@@ -263,8 +264,14 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: 
   </section>
 
   <section class="block wrap" id="read">
-    <div class="shead reveal"><span class="num">02</span><h2>Read &amp; build</h2><p>The full write-up, everything needed to reproduce it, and the survey results.</p></div>
+    <div class="shead reveal"><span class="num">02</span><h2>Read &amp; build</h2><p>The thesis in plain words and in full, the code, and the survey results.</p></div>
     <div class="grid">
+      <article class="card wide reveal" style="--c: var(--violet)">
+        <a class="cover" data-link="howItWorks" href="#" aria-label="How Tonic works, in plain words"></a>
+        <div class="top"><div class="ico"><svg><use href="#i-sliders"/></svg></div><span class="badge live">For everyone</span></div>
+        <div class="body"><h3>How Tonic works</h3><p>The thesis in plain words: how a computer writes music, what Tonic does differently, and how you can steer it. No maths, with a few things to listen to.</p></div>
+        <span class="go">Read the short version</span>
+      </article>
       <article class="card reveal" style="--c: var(--cyan)">
         <a class="cover" data-link="thesisPdf" href="#" aria-label="Open the thesis PDF"></a>
         <div class="top"><div class="ico"><svg><use href="#i-pdf"/></svg></div><span class="badge soon" id="thesis-badge">Coming soon</span></div>

@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cut">
+<title>How Tonic Works</title>
+<meta name="description" content="A short, simple explanation of Tonic, an AI that writes music and can be steered, for curious readers without a technical background.">
+<meta property="og:title" content="Tonic · How it works">
+<meta property="og:description" content="How an AI can write music, how Tonic does it differently, and how you can steer it. No maths.">
+<meta name="theme-color" content="#08080f">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23141226%22/%3E%3Crect%20x%3D%223%22%20y%3D%223%22%20width%3D%2258%22%20height%3D%2258%22%20rx%3D%2212%22%20fill%3D%22none%22%20stroke%3D%22%238b7cff%22%20stroke-width%3D%222.5%22/%3E%3Cg%20fill%3D%22%238b7cff%22%3E%3Cellipse%20cx%3D%2232%22%20cy%3D%2245%22%20rx%3D%228%22%20ry%3D%226%22%20transform%3D%22rotate%28-18%2032%2045%29%22/%3E%3C/g%3E%3Cg%20fill%3D%22%235ad1e6%22%3E%3Cellipse%20cx%3D%2232%22%20cy%3D%2232%22%20rx%3D%228%22%20ry%3D%226%22%20transform%3D%22rotate%28-18%2032%2032%29%22/%3E%3C/g%3E%3Cg%20fill%3D%22%23ff8a5c%22%3E%3Cellipse%20cx%3D%2232%22%20cy%3D%2219%22%20rx%3D%228%22%20ry%3D%226%22%20transform%3D%22rotate%28-18%2032%2019%29%22/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<!-- Audio and notes: showcase clips (demo/showcase/site/data.json), served from the showcase site.
+     Numbers: thesis abstract and sections res-control / res-survey (export of 2026-11-12). -->
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #08080f; --card: rgba(22, 21, 38, .62); --card2: rgba(255, 255, 255, .03);
+  --line: rgba(255, 255, 255, .09); --line2: rgba(255, 255, 255, .16);
+  --text: #eeeef7; --muted: #a3a3bd; --faint: #6f6f8c;
+  --violet: #8b7cff; --cyan: #5ad1e6; --coral: #ff8a5c; --green: #4cd39a; --amber: #f0b955;
+  --base: #5d5d78;
+  --font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --r: 18px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.65 var(--font); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+::selection { background: rgba(139, 124, 255, .4); }
+.wrap { width: min(1040px, 100% - 32px); margin: 0 auto; }
+
+.topbar { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(14px); background: rgba(8, 8, 15, .72); border-bottom: 1px solid var(--line); }
+.topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 56px; }
+.back { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font: 600 14px var(--font); color: var(--muted); }
+.back:hover { color: var(--text); }
+.back b { font-weight: 800; color: var(--text); letter-spacing: -.02em; }
+.progress { display: flex; gap: 6px; }
+.progress a { width: 26px; height: 4px; border-radius: 2px; background: var(--line2); transition: background .3s; }
+.progress a.on { background: var(--violet); }
+
+.hero { position: relative; overflow: hidden; isolation: isolate; padding: 84px 0 30px; }
+.glow { position: absolute; z-index: -1; border-radius: 50%; filter: blur(100px); pointer-events: none; }
+.glow.a { width: 520px; height: 520px; background: #4b3bd6; left: -180px; top: -220px; opacity: .45; }
+.glow.b { width: 420px; height: 420px; background: #0f6c86; right: -160px; top: 40px; opacity: .3; }
+.eyebrow { display: inline-flex; align-items: center; gap: 10px; font: 600 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--cyan);
+  padding: 8px 14px; border: 1px solid rgba(90, 209, 230, .3); border-radius: 999px; background: rgba(90, 209, 230, .06); }
+.eyebrow i { width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 12px var(--cyan); }
+h1 { margin: 22px 0 0; font: 900 clamp(52px, 10vw, 116px)/.92 var(--font); letter-spacing: -.055em;
+  background: linear-gradient(100deg, #fff 10%, #d4ccff 40%, var(--violet) 62%, var(--cyan) 92%);
+  -webkit-background-clip: text; background-clip: text; color: transparent; }
+.lede { margin: 24px 0 0; max-width: 58ch; font-size: 20px; color: #cfcfe2; text-wrap: pretty; }
+.meta { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: 500 12px/1 var(--mono); padding: 8px 11px; border-radius: 8px; border: 1px solid var(--line2); color: var(--muted); }
+
+/* Chapters */
+.chapter { padding: 70px 0 10px; }
+.ch-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 18px; align-items: baseline; margin-bottom: 22px; }
+.ch-num { font: 800 15px var(--mono); color: var(--violet); }
+.ch-head h2 { margin: 0; font: 800 clamp(30px, 4.2vw, 46px)/1.08 var(--font); letter-spacing: -.035em; text-wrap: balance; }
+.ch-head p { grid-column: 2; margin: 6px 0 0; color: var(--muted); font-size: 18px; max-width: 58ch; }
+.prose { max-width: 62ch; color: #cfcfe2; }
+.prose p { margin: 0 0 14px; }
+.prose b { color: var(--text); }
+.panel { margin-top: 22px; padding: 26px; border-radius: 22px; background: var(--card); border: 1px solid var(--line); }
+@media (max-width: 720px) { .panel { padding: 18px 14px; } body { font-size: 16px; } .lede { font-size: 18px; } }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+@media (max-width: 860px) { .split { grid-template-columns: minmax(0, 1fr); gap: 20px; } }
+.cap { font: 600 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin: 0 0 10px; }
+.analogy { margin-top: 18px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: start; padding: 16px 18px; border-radius: 14px; background: rgba(240, 185, 85, .06); border: 1px solid rgba(240, 185, 85, .22); color: #ddd6c4; font-size: 16px; max-width: 70ch; }
+.analogy .ic { font-size: 22px; line-height: 1; }
+
+/* 1 · tokens */
+.roll-mini { width: 100%; height: auto; display: block; }
+.tokens { display: flex; flex-wrap: wrap; gap: 8px; }
+.tok { font: 600 13px/1 var(--mono); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line2); background: var(--card2); color: var(--muted); transition: all .35s; }
+.tok.on { color: #10091f; background: var(--violet); border-color: var(--violet); box-shadow: 0 0 20px -2px var(--violet); }
+.tok.k-bar { border-style: dashed; }
+.tok-legend { margin-top: 14px; font-size: 14px; color: var(--faint); }
+
+/* 2 + 3 · candidate bars */
+.cands { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; align-items: end; height: 170px; padding: 0 4px; }
+.cand { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 8px; }
+.cand .bar { width: 100%; max-width: 46px; border-radius: 8px 8px 3px 3px; background: var(--base); height: 4%; transition: height .9s cubic-bezier(.2, .8, .2, 1), background .4s, box-shadow .4s; }
+.cand .lab { font: 600 13px var(--mono); color: var(--muted); }
+.cand.win .bar { background: var(--green); box-shadow: 0 0 22px -4px var(--green); }
+.cand.tonic .bar { background: linear-gradient(#a99dff, #7a6bff); }
+.cand.tonic.win .bar { box-shadow: 0 0 22px -2px var(--violet); }
+.step-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; align-items: center; }
+.pill { font: 600 12px/1 var(--mono); padding: 8px 11px; border-radius: 999px; border: 1px solid var(--line2); color: var(--faint); transition: all .3s; }
+.pill.on { color: var(--text); border-color: var(--violet); background: rgba(139, 124, 255, .16); }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 11px; border: 1px solid var(--line2); background: rgba(255, 255, 255, .04); cursor: pointer; font: 600 14px var(--font); transition: border-color .2s, transform .2s; }
+.btn:hover { border-color: var(--violet); transform: translateY(-1px); }
+.btn.sel { border-color: var(--violet); background: rgba(139, 124, 255, .18); }
+.btn svg { width: 14px; height: 14px; }
+
+/* Energy landscape */
+.land { width: 100%; height: auto; display: block; overflow: visible; }
+.land .curve { fill: none; stroke: url(#eg); stroke-width: 3.5; stroke-linecap: round; transition: d .9s; }
+.land .area { fill: url(#ef); opacity: .5; }
+.land .ball { fill: #fff; filter: drop-shadow(0 0 10px #8b7cff); }
+.land .trail { fill: var(--violet); opacity: .45; }
+.land text { font: 600 12px var(--mono); fill: var(--faint); }
+.land .goal { fill: var(--coral); font-weight: 700; }
+
+/* Players */
+.players { display: grid; gap: 14px; }
+.players.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.players.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 860px) { .players.three, .players.two { grid-template-columns: minmax(0, 1fr); } }
+.player { --c: var(--violet); padding: 14px; border-radius: 16px; background: var(--card2); border: 1px solid var(--line); }
+.player.on { border-color: color-mix(in srgb, var(--c) 60%, transparent); box-shadow: 0 14px 40px -24px var(--c); }
+.p-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.p-btn { width: 42px; height: 42px; flex: none; border-radius: 50%; border: 0; background: var(--c); color: #0d0b1a; display: grid; place-items: center; cursor: pointer; transition: transform .15s; }
+.p-btn:hover { transform: scale(1.06); }
+.p-btn svg { width: 16px; height: 16px; }
+.p-title { font-weight: 700; font-size: 16px; line-height: 1.2; }
+.p-sub { font-size: 13px; color: var(--faint); }
+.p-roll { width: 100%; height: 96px; display: block; border-radius: 10px; background: rgba(0, 0, 0, .3); }
+.p-foot { display: flex; justify-content: space-between; font: 500 11px var(--mono); color: var(--faint); margin-top: 6px; }
+
+/* Findings */
+.finds { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 860px) { .finds { grid-template-columns: minmax(0, 1fr); } }
+.find { padding: 22px; border-radius: 18px; background: var(--card); border: 1px solid var(--line); }
+.find .big { font: 800 44px/1 var(--font); letter-spacing: -.04em; }
+.find h3 { margin: 10px 0 6px; font: 700 19px/1.3 var(--font); letter-spacing: -.015em; }
+.find p { margin: 0; color: var(--muted); font-size: 15.5px; }
+.find.good .big { color: var(--green); } .find.ok .big { color: var(--cyan); } .find.meh .big { color: var(--amber); }
+.meters { display: grid; gap: 10px; margin-top: 14px; }
+.meter { display: grid; grid-template-columns: 112px minmax(0, 1fr) 40px; gap: 10px; align-items: center; font-size: 14px; color: var(--muted); }
+.meter .tr { height: 10px; border-radius: 5px; background: rgba(255, 255, 255, .06); overflow: hidden; }
+.meter .tr i { display: block; height: 100%; width: 0; border-radius: 5px; background: linear-gradient(90deg, #7a6bff, #4cd39a); transition: width 1.2s cubic-bezier(.2, .8, .2, 1); }
+.in .meter .tr i { width: var(--w); }
+.meter b { font: 600 13px var(--mono); color: var(--text); text-align: right; }
+
+.recap { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 860px) { .recap { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.recap div { padding: 16px; border-radius: 14px; background: var(--card2); border: 1px solid var(--line); font-size: 15px; color: var(--muted); }
+.recap b { display: block; font: 800 13px var(--mono); color: var(--violet); margin-bottom: 6px; letter-spacing: .06em; }
+
+.links { display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 860px) { .links { grid-template-columns: minmax(0, 1fr); } }
+.link { --c: var(--violet); display: flex; flex-direction: column; gap: 6px; padding: 22px; border-radius: var(--r); background: var(--card); border: 1px solid var(--line); text-decoration: none; transition: transform .2s, border-color .2s, box-shadow .2s; }
+.link:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--c) 55%, transparent); box-shadow: 0 20px 50px -28px var(--c); }
+.link b { font-size: 18px; letter-spacing: -.02em; }
+.link span { color: var(--muted); font-size: 14px; }
+.link .go { margin-top: 6px; font: 600 14px var(--font); color: var(--c); }
+.link .go::after { content: " →"; }
+
+footer { margin-top: 72px; padding: 30px 0 calc(40px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); color: var(--faint); font-size: 13px; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: space-between; }
+footer a { color: var(--muted); }
+
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .cand .bar, .meter .tr i, .tok { transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M7 4.8v14.4a1 1 0 0 0 1.5.86l11.6-7.2a1 1 0 0 0 0-1.72L8.5 3.94A1 1 0 0 0 7 4.8z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="5" y="4" width="5" height="16" rx="1.4" fill="currentColor"/><rect x="14" y="4" width="5" height="16" rx="1.4" fill="currentColor"/></symbol>
+  <symbol id="i-replay" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<nav class="topbar">
+  <div class="wrap">
+    <a class="back" href="../">← <b>Tonic</b></a>
+    <div class="progress" aria-hidden="true"><a href="#c1"></a><a href="#c2"></a><a href="#c3"></a><a href="#c4"></a><a href="#c5"></a><a href="#c6"></a></div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="glow a" aria-hidden="true"></div><div class="glow b" aria-hidden="true"></div>
+  <div class="wrap">
+    <span class="eyebrow"><i></i>The thesis in plain words</span>
+    <h1>How Tonic works</h1>
+    <p class="lede">How a computer can write music, what Tonic does differently, and how you can steer it while it plays. No maths, and a few things to listen to along the way.</p>
+    <div class="meta"><span class="chip">6 short chapters</span><span class="chip">about 8 minutes</span><span class="chip">headphones help</span></div>
+  </div>
+</header>
+
+<main>
+  <!-- 1 -->
+  <section class="chapter wrap" id="c1">
+    <div class="ch-head reveal"><span class="ch-num">01</span><h2>Music, spelled out</h2><p>A computer doesn't hear music. It reads it.</p></div>
+    <div class="prose reveal">
+      <p>To learn music, a computer first needs it written down as a list of symbols, a bit like letters in a text. Each note becomes a few symbols: where it starts, which instrument plays it, how high it is, how loud, how long it lasts.</p>
+      <p>Writing music then comes down to one question, asked again and again: <b>what is the next symbol?</b> Answer it a few hundred times and you have a piece.</p>
+    </div>
+    <div class="panel reveal">
+      <div class="split">
+        <div>
+          <p class="cap">Four notes on a piano roll</p>
+          <svg class="roll-mini" id="mini-roll" viewBox="0 0 400 170" role="img" aria-label="Four notes on a piano roll"></svg>
+        </div>
+        <div>
+          <p class="cap">…and the same notes as symbols</p>
+          <div class="tokens" id="tokens"></div>
+          <p class="tok-legend">The highlighted symbols belong to the note lit up on the left (notes that start together share their beat). I used two such "alphabets" in the thesis, called REMI and Anticipation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="chapter wrap" id="c2">
+    <div class="ch-head reveal"><span class="ch-num">02</span><h2>How most AI models do it</h2><p>Look at everything so far, pick the next symbol, move on.</p></div>
+    <div class="prose reveal">
+      <p>Most AI models that write text or music, including the ones behind chatbots, work like a very well-read autocomplete. They look at everything written so far, give each possible next symbol a chance, and <b>pick one in a single go</b>. Then they move on to the next one.</p>
+      <p>It works remarkably well. But each choice is made at once, with no second look.</p>
+    </div>
+    <div class="panel reveal" id="std">
+      <div class="split">
+        <div>
+          <p class="cap">Which note comes next?</p>
+          <div class="cands" id="cands-std"></div>
+        </div>
+        <div class="prose">
+          <p>The model gives every candidate a chance, picks, and that's it. No going back.</p>
+          <button class="btn" id="std-play" type="button"><svg><use href="#i-replay"/></svg>Show it again</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="chapter wrap" id="c3">
+    <div class="ch-head reveal"><span class="ch-num">03</span><h2>Tonic thinks twice</h2><p>Draft, check, improve.</p></div>
+    <div class="prose reveal">
+      <p>Tonic is a different kind of model, called an <b>Energy-Based Transformer</b>. Instead of picking the next symbol straight away, it starts from a rough draft: a vague idea of what could come next.</p>
+      <p>It then checks the draft with a single number, its <b>energy</b>. Low energy means "this fits the music so far", high energy means "something's off". Tonic nudges the draft downhill, toward lower energy, a couple of times. Only then does it write the symbol down.</p>
+    </div>
+    <div class="panel reveal" id="ebt">
+      <div class="split">
+        <div>
+          <p class="cap">The energy, seen as a landscape</p>
+          <svg class="land" id="land" viewBox="0 0 420 220" role="img" aria-label="An energy landscape: a ball rolls down into a valley"></svg>
+        </div>
+        <div>
+          <p class="cap">The draft, getting clearer</p>
+          <div class="cands" id="cands-ebt"></div>
+          <div class="step-row" id="steps"><span class="pill on">draft</span><span class="pill">check &amp; improve</span><span class="pill">improve again</span><span class="pill">write it down</span></div>
+          <div class="step-row"><button class="btn" id="ebt-play" type="button"><svg><use href="#i-replay"/></svg>Show it again</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="analogy reveal"><span class="ic" style="color:var(--amber)">♫</span><div>It's a little like tuning a guitar string: you pluck, hear that it's off, turn the peg a bit, pluck again. Tonic doesn't keep going forever, though: two small turns turned out to be enough.</div></div>
+  </section>
+
+  <!-- 4 -->
+  <section class="chapter wrap" id="c4">
+    <div class="ch-head reveal"><span class="ch-num">04</span><h2>Steering with the same energy</h2><p>Add a wish to the landscape, and the music rolls toward it.</p></div>
+    <div class="prose reveal">
+      <p>Here's the idea at the heart of the thesis. The energy is just a number Tonic tries to make small, so we can <b>add our own wish to it</b>. A small helper model listens for one musical feature, say loudness, and adds a penalty whenever the draft sounds further from what we asked for.</p>
+      <p>The landscape tilts. Tonic still looks for the lowest point, but that point now sits where the music is louder (or softer, or higher, or has longer notes). Tonic itself doesn't need to be retrained, and a dial sets how strongly the wish counts.</p>
+    </div>
+    <div class="panel reveal" id="steer">
+      <div class="split">
+        <div>
+          <p class="cap">Pick a wish</p>
+          <svg class="land" id="land2" viewBox="0 0 420 220" role="img" aria-label="The energy landscape tilts toward the chosen goal"></svg>
+          <div class="step-row" id="wish">
+            <button class="btn" type="button" data-w="-1">Softer</button>
+            <button class="btn sel" type="button" data-w="0">No wish</button>
+            <button class="btn" type="button" data-w="1">Louder</button>
+          </div>
+        </div>
+        <div class="prose">
+          <p>Below are three real continuations of the same opening by Tonic: once on its own, once asked to play softer, and once louder. The shaded part at the start is the opening it was given; brighter notes are louder.</p>
+          <p class="cap" style="margin-top: 14px">Features I steered</p>
+          <div class="tokens"><span class="tok">loudness</span><span class="tok">note length</span><span class="tok">how high or low</span><span class="tok">two at once</span></div>
+        </div>
+      </div>
+      <div class="players three" style="margin-top: 22px">
+        <div class="player" data-clip="soft" style="--c: var(--cyan)" data-title="Softer" data-sub="asked for much softer"></div>
+        <div class="player" data-clip="ref" style="--c: #c9c6ff" data-title="On its own" data-sub="no wish"></div>
+        <div class="player" data-clip="loud" style="--c: var(--coral)" data-title="Louder" data-sub="asked for much louder"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="chapter wrap" id="c5">
+    <div class="ch-head reveal"><span class="ch-num">05</span><h2>Does it sound like music?</h2><p>A real piece, and Tonic's take on the same opening.</p></div>
+    <div class="prose reveal">
+      <p>Both clips start from the same two seconds of a jazz guitar piece. One goes on as the musicians played it, the other is Tonic continuing on its own. I picked this example by ear, as for everything on the showcase.</p>
+    </div>
+    <div class="panel reveal">
+      <div class="players two">
+        <div class="player" data-clip="orig" style="--c: #eeeef7" data-title="The real piece" data-sub="as the musicians played it"></div>
+        <div class="player" data-clip="tonic" style="--c: var(--violet)" data-title="Tonic" data-sub="continuing the same opening"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="chapter wrap" id="c6">
+    <div class="ch-head reveal"><span class="ch-num">06</span><h2>What I found</h2><p>The good news, and the honest limits.</p></div>
+    <div class="prose reveal">
+      <p>I compared Tonic with two traditional models (the autocomplete kind from chapter 2), of the same size and trained on exactly the same music, and with the usual ways of steering them.</p>
+    </div>
+    <div class="finds reveal">
+      <div class="find good">
+        <div class="big">≈</div>
+        <h3>It writes music about as well as traditional models</h3>
+        <p>With the REMI alphabet, Tonic learned music as well as the traditional models. With the second alphabet it stayed a little behind.</p>
+      </div>
+      <div class="find good">
+        <div class="big">95%</div>
+        <h3>Steering works</h3>
+        <p>With REMI, asked for louder or softer music, Tonic moved the right way in 95 of 100 pieces, as accurately as the best traditional techniques, and without making the music harsh.</p>
+        <div class="meters">
+          <div class="meter"><span>loudness</span><div class="tr"><i style="--w: 95%"></i></div><b>95%</b></div>
+          <div class="meter"><span>note length</span><div class="tr"><i style="--w: 79%"></i></div><b>79%</b></div>
+          <div class="meter"><span>both at once</span><div class="tr"><i style="--w: 75%"></i></div><b>75%</b></div>
+        </div>
+      </div>
+      <div class="find ok">
+        <div class="big">58</div>
+        <h3>People heard it</h3>
+        <p>In a blind listening survey, 58 people heard the requested change in the right direction in 60% of answers, and rated Tonic's best REMI continuations as musical as real music. <a href="../survey-results/">See the survey results</a>.</p>
+      </div>
+      <div class="find meh">
+        <div class="big">6×</div>
+        <h3>But it isn't easier to steer</h3>
+        <p>A traditional technique reaches the same accuracy with six times less computing. Tonic also only works within a narrow range of settings: turn the dial too far and the music falls apart.</p>
+      </div>
+      <div class="find meh">
+        <div class="big">2</div>
+        <h3>Thinking longer didn't help</h3>
+        <p>The hope with this kind of model is that more rounds of checking give better music. Here, two rounds were best. Tonic learned to take a short path downhill, and its sense of "fits" only works along that path.</p>
+      </div>
+      <div class="find meh">
+        <div class="big">?</div>
+        <h3>Why steering is fragile</h3>
+        <p>The wish acts while Tonic's draft is still vague. Push too hard and the draft stays blurry, so Tonic ends up picking almost at random among, say, all the loud notes.</p>
+      </div>
+    </div>
+    <div class="panel reveal" style="margin-top: 22px">
+      <p class="cap">In four lines</p>
+      <div class="recap">
+        <div><b>READ</b>Music becomes a list of symbols.</div>
+        <div><b>DRAFT</b>Tonic guesses the next one roughly.</div>
+        <div><b>CHECK</b>An energy says how well it fits, and Tonic improves the guess.</div>
+        <div><b>STEER</b>Add a wish to the energy, and the music follows.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter wrap">
+    <div class="ch-head reveal"><span class="ch-num">→</span><h2>Want more?</h2></div>
+    <div class="links reveal">
+      <a class="link" style="--c: var(--violet)" href="https://rebeccaceccatelli.github.io/music_EBT/" target="_blank" rel="noopener"><b>Showcase</b><span>Many more examples, next to the traditional models.</span><span class="go">Listen</span></a>
+      <a class="link" style="--c: var(--green)" href="../survey-results/"><b>Survey results</b><span>What 58 listeners heard, in plain words.</span><span class="go">Read</span></a>
+      <a class="link" style="--c: var(--cyan)" href="../"><b>Everything else</b><span>The thesis, the code, the archive and the demo.</span><span class="go">Back to Tonic</span></a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Tonic · Rebecca Ceccatelli · MIT Media Lab × ETH Zürich, 2026</span>
+    <span>Simplified on purpose. The thesis has the details. <a href="../">Back to Tonic</a></span>
+  </div>
+</footer>
+
+<script>
+const CLIPS = {"orig":{"audio":"https://rebeccaceccatelli.github.io/music_EBT/audio/cur_remi_original_3865_eebaa8.mp3","prompt_end":1.9,"notes":[[0.15,0.25,64,91],[0.4,0.25,68,91],[0.65,0.25,71,91],[0.9,0.25,73,91],[1.15,0.25,71,91],[1.4,0.375,67,91],[1.4,0.5,40,99],[1.775,0.125,66,91],[1.9,0.062,37,79],[1.9,0.062,59,59],[1.9,0.25,45,99],[1.9,0.25,55,91],[1.9,0.25,61,91],[1.9,0.25,64,91],[1.9,0.25,66,91],[1.9,0.25,66,91],[2.15,0.062,51,59],[2.15,0.125,40,99],[2.15,0.25,55,51],[2.15,0.25,61,51],[2.15,0.25,64,51],[2.15,0.25,64,91],[2.15,0.25,66,51],[2.275,0.125,42,99],[2.4,0.062,37,79],[2.4,0.062,51,59],[2.4,0.125,45,99],[2.4,0.25,55,99],[2.4,0.25,61,99],[2.4,0.25,64,99],[2.4,0.25,66,99],[2.525,0.125,42,99],[2.65,0.062,51,59],[2.65,0.125,40,99],[2.65,0.25,55,79],[2.65,0.25,61,79],[2.65,0.25,64,79],[2.65,0.25,66,79],[2.775,0.5,33,99],[2.9,0.062,51,59],[2.9,0.25,55,91],[2.9,0.25,61,91],[2.9,0.25,64,91],[2.9,0.25,66,91],[3.15,0.062,51,59],[3.15,0.25,55,79],[3.15,0.25,61,79],[3.15,0.25,64,79],[3.15,0.25,66,79],[3.275,0.125,33,99],[3.4,0.062,37,79],[3.4,0.062,59,59],[3.4,0.25,55,99],[3.4,0.25,61,99],[3.4,0.25,64,99],[3.4,0.25,66,99],[3.4,0.375,37,99],[3.65,0.062,59,59],[3.65,0.125,55,71],[3.65,0.125,61,71],[3.65,0.125,64,71],[3.65,0.125,66,71],[3.775,0.125,33,99],[3.775,0.125,55,99],[3.775,0.125,59,99],[3.9,0.062,51,59],[3.9,0.25,56,91],[3.9,0.25,62,91],[3.9,0.25,66,91],[3.9,0.25,68,91],[3.9,0.5,40,99],[4.15,0.125,56,51],[4.15,0.125,62,51]],"vel":81.5},"tonic":{"audio":"https://rebeccaceccatelli.github.io/music_EBT/audio/cur_remi_ebt_3865_unguided_4dd2a9.mp3","prompt_end":1.9,"notes":[[0.15,0.25,64,91],[0.4,0.25,68,91],[0.65,0.25,71,91],[0.9,0.25,73,91],[1.15,0.25,71,91],[1.4,0.375,67,91],[1.4,0.5,40,99],[1.775,0.125,66,91],[1.9,0.25,55,91],[1.9,0.25,61,91],[1.9,0.25,64,91],[1.9,0.25,66,91],[1.9,0.25,66,91],[1.9,0.5,42,99],[1.9,0.75,45,99],[2.15,0.25,64,91],[2.4,0.25,61,91],[2.65,0.25,42,99],[2.65,0.25,45,99],[2.65,0.25,55,91],[2.65,0.25,59,91],[2.65,0.25,61,91],[2.65,0.25,64,91],[2.65,0.25,66,91],[2.9,0.25,61,91],[2.9,0.5,42,99],[2.9,0.75,45,99],[3.15,0.25,64,91],[3.4,0.25,66,91],[3.65,0.25,45,99],[3.65,0.25,64,91],[3.9,0.25,55,91],[3.9,0.25,59,91],[3.9,0.25,61,91],[3.9,0.25,64,91],[3.9,0.25,66,91],[3.9,0.5,42,99],[3.9,0.75,45,99],[4.15,0.25,61,91],[4.4,0.25,64,91],[4.65,0.25,42,99],[4.65,0.25,45,99],[4.65,0.25,55,91],[4.65,0.25,61,91],[4.65,0.25,64,91],[4.65,0.25,66,91],[4.65,0.25,66,91],[4.9,0.25,64,91],[4.9,0.5,42,99],[4.9,0.75,45,99],[5.15,0.25,59,91],[5.4,0.25,61,91],[5.65,0.25,45,99],[5.65,0.25,64,91],[5.9,0.25,53,91],[5.9,0.25,57,91],[5.9,0.25,60,91],[5.9,0.25,64,91],[5.9,0.25,64,91],[5.9,0.5,42,99],[5.9,0.75,38,99],[6.15,0.25,65,91],[6.4,0.25,67,91],[6.65,0.25,38,99],[6.65,0.25,42,99],[6.65,0.25,53,91],[6.65,0.25,57,91],[6.65,0.25,60,91],[6.65,0.25,64,91],[6.65,0.25,64,91],[6.9,0.25,62,91]],"vel":93.5},"ref":{"audio":"https://rebeccaceccatelli.github.io/music_EBT/audio/cur_remi_ebt_velocity_3107_unguided_a5850d.mp3","prompt_end":1.0,"notes":[[0.0,0.062,51,59],[0.0,0.25,83,95],[0.0,0.25,95,107],[0.0,1.875,59,95],[0.0,2.0,35,99],[0.125,1.75,62,83],[0.188,1.75,66,67],[0.25,0.25,81,71],[0.25,0.25,93,79],[0.5,0.25,78,83],[0.5,0.25,90,95],[0.75,0.25,76,67],[0.75,0.25,88,79],[1.0,0.875,78,99],[1.0,0.875,90,107],[2.0,0.062,51,55],[2.0,0.25,78,91],[2.0,0.25,90,103],[2.0,1.812,55,95],[2.0,1.938,43,99],[2.125,1.625,59,91],[2.25,0.25,76,71],[2.25,0.25,88,83],[2.25,1.562,62,79],[2.5,0.25,74,83],[2.5,0.25,86,95],[2.75,0.25,71,67],[2.75,0.25,83,79],[3.0,0.5,74,83],[3.0,0.5,86,95],[3.5,0.25,71,79],[3.5,0.25,83,91],[3.75,2.0,76,71],[3.75,2.0,88,79],[4.0,0.062,51,59],[4.0,1.875,55,95],[4.0,2.0,36,99],[4.125,1.75,60,83],[4.25,1.625,64,75],[6.0,0.062,51,55],[6.0,1.875,55,95],[6.0,2.0,43,99],[6.125,1.625,59,91],[6.25,1.562,62,79],[8.0,0.062,51,55],[8.0,1.875,55,95],[8.0,1.938,36,99],[8.125,1.75,60,91],[8.25,1.625,64,79],[10.0,0.062,51,55],[10.0,1.875,55,95],[10.0,2.0,43,99],[10.125,1.75,59,91],[10.25,1.562,62,79],[12.0,0.062,51,59],[12.0,1.875,55,95],[12.0,1.938,36,99],[12.125,1.625,60,91],[12.25,1.562,64,79],[14.0,0.062,51,55],[14.0,1.875,55,95],[14.0,1.938,36,99],[14.125,1.625,59,91],[14.25,1.562,62,79],[16.0,0.062,51,55],[16.0,1.875,55,95],[16.0,2.0,43,99],[16.125,1.625,59,91]],"vel":84.2},"soft":{"audio":"https://rebeccaceccatelli.github.io/music_EBT/audio/cur_remi_ebt_velocity_3107_steered_0p03_d2_fe3969.mp3","prompt_end":1.0,"notes":[[0.0,0.062,51,59],[0.0,0.25,83,95],[0.0,0.25,95,107],[0.0,1.875,59,95],[0.0,2.0,35,99],[0.125,1.75,62,83],[0.188,1.75,66,67],[0.25,0.25,81,71],[0.25,0.25,93,79],[0.5,0.25,78,83],[0.5,0.25,90,95],[0.75,0.25,76,67],[0.75,0.25,88,79],[1.0,0.875,78,99],[1.0,0.875,90,103],[2.0,1.0,28,63],[2.0,1.0,52,67],[2.062,0.938,59,63],[2.062,0.938,64,63],[2.125,0.875,68,51],[2.5,0.25,78,47],[2.5,0.25,90,47],[2.75,0.25,76,43],[2.75,0.25,88,39],[3.0,0.25,78,43],[3.0,0.25,90,43],[3.0,1.0,28,55],[3.0,1.0,52,55],[3.062,0.938,59,47],[3.062,0.938,64,47],[3.125,0.875,68,39],[3.25,0.25,76,103],[3.25,0.25,88,43],[3.5,0.25,78,47],[3.5,0.25,90,43],[3.75,0.25,76,39],[3.75,0.25,88,43],[4.0,0.25,78,47],[4.0,0.25,90,51],[4.0,1.0,30,51],[4.0,1.0,54,39],[4.062,0.938,59,43],[4.062,0.938,63,47],[4.125,0.875,66,11],[4.25,0.25,76,79],[4.25,0.25,88,3],[4.5,0.25,78,111],[4.5,0.25,90,87],[4.75,0.25,76,51],[4.75,0.25,88,11],[5.0,0.25,78,75],[5.0,0.25,90,3],[5.0,0.875,54,107],[5.0,1.0,30,23],[5.062,0.938,59,15],[5.062,0.938,63,123],[5.125,0.875,66,15],[5.25,0.25,76,7],[5.25,0.25,88,31],[5.5,0.25,78,99],[5.5,0.25,90,87],[5.75,0.25,76,3],[5.75,0.25,88,43],[6.0,0.25,78,11],[6.0,0.25,90,15],[6.0,1.0,32,107],[6.0,1.0,56,43],[6.062,0.938,59,35],[6.062,0.938,63,111],[6.125,0.875,68,7]],"vel":50.4},"loud":{"audio":"https://rebeccaceccatelli.github.io/music_EBT/audio/cur_remi_ebt_velocity_3107_steered_0p02_u2_2c3c52.mp3","prompt_end":1.0,"notes":[[0.0,0.062,51,59],[0.0,0.25,83,95],[0.0,0.25,95,107],[0.0,1.875,59,95],[0.0,2.0,35,99],[0.125,1.75,62,83],[0.188,1.75,66,67],[0.25,0.25,81,71],[0.25,0.25,93,79],[0.5,0.25,78,83],[0.5,0.25,90,95],[0.75,0.25,76,67],[0.75,0.25,88,79],[1.0,0.875,78,99],[1.0,0.875,90,103],[2.0,0.062,51,127],[2.0,0.062,54,127],[2.0,0.125,78,115],[2.0,0.125,81,103],[2.0,0.125,86,103],[2.0,0.125,90,111],[2.0,0.625,50,103],[2.0,2.0,38,111],[2.25,0.062,54,111],[2.25,0.125,78,107],[2.25,0.125,81,103],[2.25,0.125,86,103],[2.25,0.125,90,103],[2.25,0.375,57,103],[2.5,0.062,54,123],[2.5,0.125,62,99],[2.5,0.125,78,119],[2.5,0.125,81,119],[2.5,0.125,86,123],[2.5,0.125,90,119],[2.75,0.062,54,119],[2.75,0.125,78,115],[2.75,0.125,81,99],[2.75,0.125,86,111],[2.75,0.125,90,119],[2.75,0.875,50,107],[3.0,0.062,54,127],[3.0,0.25,78,111],[3.0,0.25,81,103],[3.0,0.25,86,107],[3.0,0.25,90,115],[3.0,0.625,57,99],[3.25,0.062,54,115],[3.25,0.25,76,107],[3.25,0.25,80,127],[3.25,0.25,88,127],[3.25,0.375,62,119],[3.5,0.062,54,127],[3.5,0.25,66,119],[3.5,0.25,74,107],[3.5,0.25,78,115],[3.5,0.25,86,111],[3.75,0.062,54,103],[3.75,0.125,57,99],[3.75,0.25,73,107],[3.75,0.25,76,115],[3.75,0.25,85,115],[4.0,0.062,54,107],[4.0,0.25,71,95],[4.0,0.25,74,99],[4.0,0.25,83,103],[4.0,0.625,50,127],[4.0,2.0,38,119],[4.25,0.062,54,115],[4.25,0.25,69,115],[4.25,0.25,73,123],[4.25,0.25,81,111],[4.25,0.375,57,103],[4.5,0.062,54,127]],"vel":112.1}};
+(() => {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const sleep = (ms) => new Promise((r) => setTimeout(r, reduce ? 0 : ms));
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent && parent.appendChild(e); return e; };
+
+  /* ── 1 · piano roll ↔ symbols ── */
+  const notes = [
+    { t: 0, d: 1, p: 3, sym: ["Beat 1", "Piano", "E", "loud", "1 beat"] },
+    { t: 1, d: 1, p: 5, sym: ["Beat 2", "Piano", "G", "soft", "1 beat"] },
+    { t: 2, d: 2, p: 4, sym: ["Beat 3", "Piano", "F", "loud", "2 beats"] },
+    { t: 2, d: 2, p: 0, sym: ["Bass", "C", "loud", "2 beats"] },
+  ];
+  const mr = document.getElementById("mini-roll");
+  for (let i = 0; i <= 4; i++) el("line", { x1: 30 + i * 90, x2: 30 + i * 90, y1: 10, y2: 160, stroke: "rgba(255,255,255,.08)" }, mr);
+  const rects = notes.map((n) => el("rect", { x: 32 + n.t * 90, y: 140 - n.p * 24, width: n.d * 90 - 6, height: 18, rx: 5, fill: "#5d5d78" }, mr));
+  const toks = document.getElementById("tokens");
+  const tokEls = [];
+  const bar = document.createElement("span"); bar.className = "tok k-bar"; bar.textContent = "New bar"; toks.appendChild(bar);
+  notes.forEach((n, i) => n.sym.forEach((s) => { const t = document.createElement("span"); t.className = "tok"; t.textContent = s; t.dataset.n = i; toks.appendChild(t); tokEls.push(t); }));
+  let ti = 0;
+  setInterval(() => {
+    const i = ti % notes.length; ti++;
+    tokEls.forEach((t) => t.classList.toggle("on", +t.dataset.n === i));
+    rects.forEach((r, j) => r.setAttribute("fill", j === i ? "#8b7cff" : "#5d5d78"));
+  }, reduce ? 4000 : 1500);
+
+  /* ── 2 + 3 · candidate bars ── */
+  const LABS = ["C", "D", "E", "F", "G", "A"];
+  function makeCands(id, cls) {
+    const box = document.getElementById(id);
+    box.innerHTML = LABS.map((l) => `<div class="cand ${cls}"><div class="bar"></div><span class="lab">${l}</span></div>`).join("");
+    const c = [...box.children];
+    return (vals, win) => c.forEach((e, i) => { e.querySelector(".bar").style.height = Math.max(4, vals[i] * 100) + "%"; e.classList.toggle("win", i === win); });
+  }
+  const stdSet = makeCands("cands-std", "");
+  async function runStd() {
+    stdSet([0, 0, 0, 0, 0, 0], -1); await sleep(500);
+    stdSet([.18, .1, .62, .22, .45, .08], -1); await sleep(1100);
+    stdSet([.18, .1, .62, .22, .45, .08], 2);
+  }
+  document.getElementById("std-play").onclick = runStd;
+
+  /* Energy landscape (shared by 3 and 4) */
+  const W = 420, H = 220, X0 = 20, X1 = 400, Y0 = 30, Y1 = 190;
+  const base = (x) => 1.4 * (x - .42) ** 2 + .05 * Math.sin(x * 14) + .06;
+  function landscape(svgId, wishFn) {
+    const svg = document.getElementById(svgId);
+    svg.innerHTML = `<defs><linearGradient id="eg" x1="0" x2="1"><stop offset="0" stop-color="#5ad1e6"/><stop offset="1" stop-color="#8b7cff"/></linearGradient>
+      <linearGradient id="ef" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#8b7cff" stop-opacity=".35"/><stop offset="1" stop-color="#8b7cff" stop-opacity="0"/></linearGradient></defs>`;
+    const area = el("path", { class: "area" }, svg), curve = el("path", { class: "curve" }, svg);
+    el("text", { x: X0, y: 16 }, svg).textContent = "high energy: doesn't fit";
+    const lowT = el("text", { x: X1, y: 214, "text-anchor": "end" }, svg); lowT.textContent = "low energy: fits";
+    const goalT = el("text", { class: "goal", y: 16, "text-anchor": "middle" }, svg);
+    const trail = el("g", {}, svg), ball = el("circle", { class: "ball", r: 9 }, svg);
+    let E = base;
+    const sx = (x) => X0 + x * (X1 - X0);
+    const toY = (e) => Y1 - Math.min(1, e / .55) * (Y1 - Y0); // high energy = top
+    function draw() {
+      let d = "";
+      for (let i = 0; i <= 120; i++) { const x = i / 120; d += (i ? "L" : "M") + sx(x).toFixed(1) + "," + toY(E(x)).toFixed(1); }
+      curve.setAttribute("d", d); area.setAttribute("d", d + `L${X1},${Y1 + 20}L${X0},${Y1 + 20}Z`);
+    }
+    function place(x) { ball.setAttribute("cx", sx(x)); ball.setAttribute("cy", toY(E(x)) - 9); }
+    function setWish(w) {
+      const raw = w ? (x) => base(x) + 2 * (x - (w > 0 ? .92 : .04)) ** 2 : base;
+      let m = Infinity; for (let i = 0; i <= 200; i++) m = Math.min(m, raw(i / 200));
+      E = (x) => raw(x) - m + .04;
+      goalT.textContent = w > 0 ? "wish: louder →" : w < 0 ? "← wish: softer" : "";
+      goalT.setAttribute("x", w > 0 ? sx(.8) : sx(.2));
+      draw();
+    }
+    async function roll(x, steps, onStep) {
+      trail.innerHTML = ""; place(x); await sleep(500);
+      for (let k = 0; k < steps; k++) {
+        el("circle", { class: "trail", r: 4, cx: sx(x), cy: toY(E(x)) - 9 }, trail);
+        const g = (E(x + 1e-3) - E(x - 1e-3)) / 2e-3;
+        const target = Math.min(.98, Math.max(.02, x - .18 * g));
+        const from = x, n = reduce ? 1 : 24;
+        for (let i = 1; i <= n; i++) { x = from + (target - from) * (i / n); place(x); await sleep(22); }
+        onStep && onStep(k + 1); await sleep(600);
+      }
+      return x;
+    }
+    setWish(wishFn || 0); place(.08);
+    return { roll, setWish, place };
+  }
+
+  const L1 = landscape("land");
+  const ebtSet = makeCands("cands-ebt", "tonic");
+  const pills = [...document.querySelectorAll("#steps .pill")];
+  const stage = (k) => pills.forEach((p, i) => p.classList.toggle("on", i === k));
+  const DRAFTS = [[.3, .28, .33, .3, .32, .27], [.2, .12, .5, .2, .38, .1], [.1, .05, .78, .1, .2, .04]];
+  let ebtBusy = false;
+  async function runEbt() {
+    if (ebtBusy) return; ebtBusy = true;
+    stage(0); ebtSet(DRAFTS[0], -1);
+    await L1.roll(.08, 4, (k) => { const s = Math.min(k, 2); stage(Math.min(k, 2)); ebtSet(DRAFTS[s], -1); });
+    stage(3); ebtSet(DRAFTS[2], 2); ebtBusy = false;
+  }
+  document.getElementById("ebt-play").onclick = runEbt;
+
+  const L2 = landscape("land2");
+  let rolling = false;
+  document.querySelectorAll("#wish .btn").forEach((b) => b.onclick = async () => {
+    document.querySelectorAll("#wish .btn").forEach((x) => x.classList.toggle("sel", x === b));
+    const w = +b.dataset.w; L2.setWish(w);
+    if (rolling) return; rolling = true; await L2.roll(.42, 5); rolling = false;
+  });
+
+  /* ── Players: one audio element, piano roll with playhead ── */
+  const audio = new Audio(); audio.preload = "none";
+  let current = null;
+  const players = [...document.querySelectorAll(".player")].map((p) => {
+    const c = CLIPS[p.dataset.clip];
+    p.innerHTML = `<div class="p-head"><button class="p-btn" type="button" aria-label="Play ${p.dataset.title}"><svg><use href="#i-play"/></svg></button>
+      <div><div class="p-title">${p.dataset.title}</div><div class="p-sub">${p.dataset.sub}</div></div></div>
+      <canvas class="p-roll"></canvas><div class="p-foot"><span>opening</span><span class="t">0:00</span></div>`;
+    const cv = p.querySelector("canvas"), btn = p.querySelector(".p-btn"), tEl = p.querySelector(".t");
+    const len = Math.min(12, Math.max(...c.notes.map((n) => n[0] + n[1])));
+    const pitches = c.notes.map((n) => n[2]), lo = Math.min(...pitches) - 2, hi = Math.max(...pitches) + 2;
+    const col = getComputedStyle(p).getPropertyValue("--c").trim() || "#8b7cff";
+    function draw(t) {
+      const r = devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+      if (!w) return;
+      cv.width = w * r; cv.height = h * r;
+      const g = cv.getContext("2d"); g.scale(r, r); g.clearRect(0, 0, w, h);
+      const X = (s) => (s / len) * w, Y = (pp) => h - 6 - ((pp - lo) / (hi - lo)) * (h - 12);
+      g.fillStyle = "rgba(255,255,255,.06)"; g.fillRect(0, 0, X(c.prompt_end), h);
+      for (const [s, d, pp, v] of c.notes) {
+        if (s > len) continue;
+        g.globalAlpha = .18 + .82 * Math.pow(v / 127, 1.6);
+        g.fillStyle = s < c.prompt_end ? "#9a9ab4" : (col.startsWith("var") ? "#8b7cff" : col);
+        g.fillRect(X(s), Y(pp) - 2, Math.max(2, X(d) - 1), 4);
+      }
+      g.globalAlpha = 1;
+      if (t > 0) { g.fillStyle = "#fff"; g.fillRect(X(t), 0, 2, h); }
+    }
+    const api = { p, c, btn, draw, tEl, len };
+    btn.onclick = () => toggle(api);
+    return api;
+  });
+  const resolveColors = () => players.forEach((q) => q.draw(0));
+  function setIcon(q, playing) { q.btn.innerHTML = `<svg><use href="#i-${playing ? "pause" : "play"}"/></svg>`; q.p.classList.toggle("on", playing); }
+  function toggle(q) {
+    if (current === q && !audio.paused) { audio.pause(); return; }
+    if (current && current !== q) { setIcon(current, false); current.draw(0); }
+    if (current !== q) { audio.src = q.c.audio; current = q; }
+    audio.play().catch(() => {});
+  }
+  audio.addEventListener("play", () => current && setIcon(current, true));
+  audio.addEventListener("pause", () => current && setIcon(current, false));
+  audio.addEventListener("ended", () => { if (current) { setIcon(current, false); current.draw(0); } });
+  (function tick() {
+    if (current && !audio.paused) {
+      current.draw(Math.min(audio.currentTime, current.len));
+      const s = Math.floor(audio.currentTime); current.tEl.textContent = `0:${String(s).padStart(2, "0")}`;
+    }
+    requestAnimationFrame(tick);
+  })();
+  addEventListener("resize", resolveColors);
+
+  /* ── Reveal + animations when sections come into view ── */
+  const ran = new Set();
+  const io = new IntersectionObserver((es) => es.forEach((e) => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add("in");
+    if (e.target.id === "std" && !ran.has("std")) { ran.add("std"); runStd(); }
+    if (e.target.id === "ebt" && !ran.has("ebt")) { ran.add("ebt"); runEbt(); }
+    if (e.target.querySelector && e.target.querySelector(".player")) resolveColors();
+  }), { threshold: .25 });
+  document.querySelectorAll(".reveal").forEach((r) => io.observe(r));
+  resolveColors();
+
+  // Progress dashes in the top bar
+  const dashes = [...document.querySelectorAll(".progress a")];
+  const io2 = new IntersectionObserver((es) => es.forEach((e) => {
+    if (e.isIntersecting) { const i = ["c1", "c2", "c3", "c4", "c5", "c6"].indexOf(e.target.id); dashes.forEach((d, j) => d.classList.toggle("on", j <= i)); }
+  }), { rootMargin: "-40% 0px -55% 0px" });
+  ["c1", "c2", "c3", "c4", "c5", "c6"].forEach((id) => io2.observe(document.getElementById(id)));
+})();
+</script>
+</body>
+</html>
