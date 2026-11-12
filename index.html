@@ -76,6 +76,7 @@ a { color: inherit; }
 h1 { margin: 26px 0 0; font: 900 clamp(84px, 17vw, 188px)/.86 var(--font); letter-spacing: -.055em;
   background: linear-gradient(100deg, #fff 8%, #d4ccff 38%, var(--violet) 58%, var(--cyan) 86%);
   -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 10px 40px rgba(139, 124, 255, .25)); }
+.card-thesis-title { font-weight: 600; color: #e2e0f5 !important; line-height: 1.35; text-wrap: balance; margin: 6px 0 6px !important; }
 .thesis-title { margin: 22px 0 0; max-width: 30ch; font: 600 clamp(21px, 2.6vw, 30px)/1.25 var(--font); letter-spacing: -.015em; color: #e2e0f5; text-wrap: balance; }
 .lede { margin: 16px 0 0; max-width: 60ch; color: var(--muted); font-size: 17px; }
 .lede b { color: var(--text); font-weight: 600; }
@@ -194,7 +195,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: 
   <div class="wrap">
     <span class="eyebrow"><i></i>Master's thesis · MIT Media Lab × ETH Zürich · 2026</span>
     <h1>Tonic</h1>
-    <p class="thesis-title">Towards Controllable Symbolic Music Generation with Energy-Based Transformers</p>
+    <p class="thesis-title">Energy-Based Transformers for Symbolic Music Generation and Single- and Multi-Attribute Control</p>
     <p class="lede">An <b>Energy-Based Transformer</b> (EBT) that writes music by refining its guesses, and can be <b>steered</b> toward louder, longer or higher notes at generation time, compared with <b>Llama</b> and <b>GPT-2</b> baselines.</p>
     <div class="byline">
       <span class="who"><b>Rebecca Ceccatelli</b></span>
@@ -259,7 +260,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: 
       <article class="card reveal" style="--c: var(--cyan)">
         <a class="cover" data-link="thesisPdf" href="#" aria-label="Open the thesis PDF"></a>
         <div class="top"><div class="ico"><svg><use href="#i-pdf"/></svg></div><span class="badge soon" id="thesis-badge">Coming soon</span></div>
-        <div class="body"><h3>Thesis</h3><p>Method, experiments and results: how energy-based refinement makes inference-time control possible, and where it beats or ties the autoregressive baselines.</p></div>
+        <div class="body"><h3>Thesis</h3><p class="card-thesis-title">Tonic: Energy-Based Transformers for Symbolic Music Generation and Single- and Multi-Attribute Control</p><p>Method, experiments and results, compared with autoregressive Transformers and other steering methods.</p></div>
         <span class="go" id="thesis-go">PDF available after submission</span>
       </article>
       <article class="card reveal" style="--c: #c9c6ff">
