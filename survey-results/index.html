@@ -90,6 +90,9 @@ h3 { margin: 0 0 6px; font: 700 20px/1.25 var(--font); letter-spacing: -.02em; }
 .card p { color: var(--muted); font-size: 15px; margin: 0; }
 .card .tag { display: inline-flex; align-items: center; gap: 8px; font: 600 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--c); margin-bottom: 12px; }
 .card .tag::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.card .rows { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 16px; margin: 12px 0 0; font-size: 15px; }
+.card .rows dt { color: var(--text); font-weight: 600; }
+.card .rows dd { color: var(--muted); margin: 0; }
 
 /* Survey parts */
 .parts { counter-reset: part; }
@@ -248,35 +251,42 @@ footer a { color: var(--muted); }
   <section class="wrap" id="what">
     <div class="shead reveal"><span class="num">01</span><h2>What you listened to</h2></div>
     <div class="narrow reveal">
-      <p>Every clip opened with a second or so of a real piece of music. From there, something carried on: either the rest of the real piece, or one of three computer models that had learned from the same large collection of music files.</p>
+      <p>Every clip opened with a second or so of a real piece. Then one of these carried on:</p>
     </div>
 
     <div class="cards reveal">
-      <div class="card" style="--c: var(--violet)">
-        <div class="tag">Tonic</div>
-        <h3>The model from my thesis</h3>
-        <p>It doesn't commit to the next note straight away: it starts from a rough guess and refines it over a few steps. That refining step is also where it can be steered.</p>
+      <div class="card" style="--c: #eeeef7">
+        <div class="tag">The original</div>
+        <h3>The real thing</h3>
+        <p>How the piece really continues, hidden among the others.</p>
       </div>
       <div class="card" style="--c: #9a9ab4">
         <div class="tag">Llama &amp; GPT-2</div>
         <h3>The usual approach</h3>
-        <p>Two well-known designs, the kind behind many chatbots, trained on exactly the same music. They pick each next note in one go.</p>
+        <p>Well-known AI designs, trained on the same music. They pick each note in one go.</p>
       </div>
-      <div class="card" style="--c: #eeeef7">
-        <div class="tag">The original</div>
-        <h3>The real thing</h3>
-        <p>How the piece actually continues, hidden among the others as a reference point. You were never told which one it was.</p>
+      <div class="card" style="--c: var(--violet)">
+        <div class="tag">Tonic</div>
+        <h3>My model</h3>
+        <p>Starts each note as a rough guess and refines it. That's also where it gets steered.</p>
       </div>
     </div>
 
     <div class="cards two reveal">
       <div class="card" style="--c: var(--cyan)">
         <div class="tag">Two ways to write music down</div>
-        <p>Computers don't read sheet music, so music first has to become a sequence of symbols. I tried two ways. <b style="color:var(--text)">REMI</b> goes bar by bar and records how hard each note is played. <b style="color:var(--text)">Anticipation</b> lists notes by their timing and has no loudness at all, which is why every Anticipation clip played at the same volume.</p>
+        <dl class="rows">
+          <dt>REMI</dt><dd>Bar by bar, with loudness</dd>
+          <dt>Anticipation</dt><dd>By timing, no loudness: every clip at the same volume</dd>
+        </dl>
       </div>
       <div class="card" style="--c: var(--coral)">
         <div class="tag">Steering</div>
-        <p>Steering means asking a model, while it writes, for music that's louder or softer, with longer or shorter notes, or higher or lower. Tonic does it inside its refining step. For Llama and GPT-2 I used common techniques: nudging the model's choices toward the target as it writes, or writing many versions and keeping the one that comes closest.</p>
+        <p>Asking for louder, longer or higher notes (or the opposite) while the model writes.</p>
+        <dl class="rows">
+          <dt>Tonic</dt><dd>Inside its refining step</dd>
+          <dt>Llama &amp; GPT-2</dt><dd>Nudge each choice, or write many versions and keep the closest</dd>
+        </dl>
       </div>
     </div>
 
