@@ -151,17 +151,7 @@ section.block { padding: 48px 0 18px; }
 .note code { font: 12.5px var(--mono); color: var(--muted); background: rgba(255, 255, 255, .05); padding: 2px 6px; border-radius: 6px; }
 
 #read .grid { grid-auto-rows: auto; }
-.card.wide { grid-column: 1 / -1; min-height: 0; align-content: start; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 14px 40px; align-items: center; }
-.card.wide .top { grid-column: 1 / -1; }
-.card.wide .go { grid-column: 1 / -1; }
-.res-preview { display: flex; flex-direction: column; gap: 10px; }
-.res-bar { display: flex; height: 44px; border-radius: 11px; overflow: hidden; font: 800 17px var(--font); letter-spacing: -.02em; }
-.res-bar span { display: flex; align-items: center; padding: 0 12px; white-space: nowrap; }
-.res-bar .r { width: 60%; background: var(--green); color: #062618; }
-.res-bar .w { width: 20%; background: var(--coral); color: #2b1006; }
-.res-bar .n { width: 20%; background: rgba(255, 255, 255, .13); }
-.res-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--faint); }
-@media (max-width: 860px) { .card.wide { grid-template-columns: minmax(0, 1fr); } }
+.card.wide { grid-column: 1 / -1; min-height: 0; }
 
 /* Mini piano roll inside the featured card */
 .mini { height: 92px; border-radius: 12px; background: rgba(0, 0, 0, .28); border: 1px solid var(--line); position: relative; overflow: hidden; }
@@ -264,25 +254,15 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: 
         <div class="actions">
           <a class="btn" data-link="surveyEn" href="#" style="--c: var(--green)" target="_blank" rel="noopener"><svg><use href="#i-head"/></svg>Take it in English</a>
           <a class="btn" data-link="surveyIt" href="#" style="--c: var(--green)" target="_blank" rel="noopener"><svg><use href="#i-head"/></svg>Partecipa in italiano</a>
-          <a class="btn" data-link="surveyResults" href="#" style="--c: var(--green)"><svg><use href="#i-chart"/></svg>See the results</a>
+          <a class="btn" data-link="surveyResults" href="#" style="--c: var(--green)"><svg><use href="#i-chart"/></svg>See the survey results</a>
         </div>
       </article>
     </div>
   </section>
 
   <section class="block wrap" id="read">
-    <div class="shead reveal"><span class="num">02</span><h2>Read &amp; build</h2><p>The survey results, the full write-up, and everything needed to reproduce it.</p></div>
+    <div class="shead reveal"><span class="num">02</span><h2>Read &amp; build</h2><p>The full write-up, everything needed to reproduce it, and the survey results.</p></div>
     <div class="grid">
-      <article class="card wide reveal" style="--c: var(--green)">
-        <a class="cover" data-link="surveyResults" href="#" aria-label="See the listening study results"></a>
-        <div class="top"><div class="ico"><svg><use href="#i-chart"/></svg></div><span class="badge live">Results</span></div>
-        <div class="body"><h3>What listeners heard</h3><p>The listening study in plain words: which music 54 people found most musical, whether they heard the steering, and what they listened to. For anyone who took the survey, or is just curious.</p></div>
-        <div class="res-preview" aria-hidden="true">
-          <div class="res-bar"><span class="r">60%</span><span class="w">20%</span><span class="n">20%</span></div>
-          <div class="res-legend"><span>heard the change asked for</span><span>· the opposite</span><span>· no difference</span></div>
-        </div>
-        <span class="go">See the results</span>
-      </article>
       <article class="card reveal" style="--c: var(--cyan)">
         <a class="cover" data-link="thesisPdf" href="#" aria-label="Open the thesis PDF"></a>
         <div class="top"><div class="ico"><svg><use href="#i-pdf"/></svg></div><span class="badge soon" id="thesis-badge">Coming soon</span></div>
@@ -295,6 +275,12 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: 
         <div class="body"><h3>Code</h3><p>Training, inference and guidance for Tonic and the Llama / GPT-2 baselines on REMI and Anticipation tokens, plus the evaluation, the demo and these sites.</p></div>
         <div class="meta"><span class="chip">PyTorch</span><span class="chip">REMI</span><span class="chip">Anticipation</span><span class="chip">Gradio</span></div>
         <span class="go">View on GitHub</span>
+      </article>
+      <article class="card wide reveal" style="--c: var(--green)">
+        <a class="cover" data-link="surveyResults" href="#" aria-label="See the listening survey results"></a>
+        <div class="top"><div class="ico"><svg><use href="#i-head"/></svg></div><span class="badge live">Results</span></div>
+        <div class="body"><h3>Listening survey: the results</h3><p>What the 54 people who took the blind listening survey heard: which versions sounded most musical, whether the steering came through, and what was behind each clip. Written for everyone, whether you took part or are just curious.</p></div>
+        <span class="go">See the survey results</span>
       </article>
     </div>
     <div class="reveal" style="margin-top: 26px">
