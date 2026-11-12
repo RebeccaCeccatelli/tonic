@@ -81,6 +81,7 @@ h1 { margin: 26px 0 0; font: 900 clamp(84px, 17vw, 188px)/.86 var(--font); lette
 .thesis-title { margin: 22px 0 0; max-width: 30ch; font: 600 clamp(21px, 2.6vw, 30px)/1.25 var(--font); letter-spacing: -.015em; color: #e2e0f5; text-wrap: balance; }
 .lede { margin: 16px 0 0; max-width: 60ch; color: var(--muted); font-size: 17px; }
 .lede b { color: var(--text); font-weight: 600; }
+.lede + .lede { margin-top: 10px; }
 .byline { margin: 26px 0 0; display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 14px; color: var(--muted); }
 .byline b { color: var(--text); font-weight: 600; }
 .byline .who { flex-basis: 100%; }
@@ -201,7 +202,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: 
     <span class="eyebrow"><i></i>Master's thesis · MIT Media Lab × ETH Zürich · 2026</span>
     <h1>Tonic</h1>
     <p class="thesis-title">Energy-Based Transformers for Symbolic Music Generation and Single- and Multi-Attribute Control</p>
-    <p class="lede">Tonic is an AI that composes music one note at a time. Each note starts as a rough guess that Tonic keeps refining until it fits. While it writes, you can <b>steer</b> it: louder or softer, shorter or longer notes, higher or lower. We compare it with <b>Llama</b> and <b>GPT-2</b>, two standard AI designs also used in chatbots. (Technically, Tonic is an <b>Energy-Based Transformer</b>, or EBT.)</p>
+    <p class="lede">Tonic writes music one note at a time. It gives each guess an <b>energy</b>, low when the note fits, and refines the guess until the energy is low.</p>
+    <p class="lede">Add your own goal to that energy and you can <b>steer</b> it toward louder, longer or higher notes. We compare it with <b>Llama</b> and <b>GPT-2</b>.</p>
     <div class="byline">
       <span class="who"><b>Rebecca Ceccatelli</b></span>
       <span>Supervised by Prof. Dr. Roger Wattenhofer (ETH) · Prof. Joseph A. Paradiso (MIT)</span>
