@@ -17,3 +17,9 @@ commit; GitHub Pages republishes within a minute.
 - **Thesis:** put the PDF's URL in `thesisPdf` (for example a release asset of this repo); the "coming soon"
   labels turn into links.
 - **Survey:** the card says "Open" and has no closing date (answers are always welcome).
+
+## Survey results page
+
+`survey-results/index.html`: the listening study for non-technical readers (linked from the "Read & build"
+card and the survey card). Numbers are typed into the page from the thesis analysis
+(`music_EBT_logs/survey/analysis/main.json`, cacophony from `no686.json`); update them by hand if the analysis changes.
