@@ -110,6 +110,7 @@ h3 { margin: 0 0 6px; font: 700 20px/1.25 var(--font); letter-spacing: -.02em; }
 .finding h3 { font-size: clamp(22px, 2.8vw, 28px); letter-spacing: -.025em; margin-bottom: 14px; max-width: 30ch; text-wrap: balance; }
 .finding .text { color: #cfcfe2; max-width: 66ch; }
 .finding .text p:last-child { margin-bottom: 0; }
+.finding .text b { color: var(--text); font-weight: 650; }
 .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 34px; align-items: start; margin-top: 8px; }
 @media (max-width: 860px) { .split { grid-template-columns: minmax(0, 1fr); gap: 22px; } .finding { padding: 22px 18px; } }
 .chart-title { font: 600 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
@@ -324,16 +325,16 @@ footer a { color: var(--muted); }
       <h3>With REMI, Tonic held its own against the real music</h3>
       <div class="split">
         <div class="text">
-          <p>The score is simple: how often a version was picked as most musical, minus how often it was picked as least musical. A version that always won would score +1; one that always lost, −1.</p>
-          <p>With REMI, Tonic's continuations scored about the same as the originals (+0.17 against +0.20) and clearly above Llama and GPT-2.</p>
-          <p>With Anticipation the four were close. Llama came out a little ahead, and the originals came last, just behind GPT-2. That's mostly three real pieces: very dense arrangements (low brass, clashing high strings, distorted guitar over a repeated piano note) that many of you picked as least musical. I listened to them again and they play correctly. Real music isn't always pleasant music.</p>
+          <p><b>The score:</b> out of 100 votes, how many more picked a version as <i>most</i> musical than as <i>least</i> musical.</p>
+          <p><b>REMI:</b> Tonic +17, almost level with the original (+20), and well ahead of Llama and GPT-2.</p>
+          <p><b>Anticipation:</b> all four close. The original came last because of three very dense pieces many of you disliked. Real music isn't always pleasant music.</p>
         </div>
         <div>
           <p class="chart-title">REMI</p>
-          <div class="chart" data-chart="p1" data-rows='[["Original",0.20,"orig"],["Tonic",0.17,"tonic"],["GPT-2",-0.10],["Llama",-0.27]]'></div>
+          <div class="chart" data-chart="p1" data-rows='[["Original",20,"orig"],["Tonic",17,"tonic"],["GPT-2",-10],["Llama",-27]]'></div>
           <p class="chart-title">Anticipation</p>
-          <div class="chart" data-chart="p1" data-rows='[["Llama",0.15],["Tonic",0.05,"tonic"],["GPT-2",-0.08],["Original",-0.11,"orig"]]'></div>
-          <div class="axis"><span></span><div><span>−0.5</span><span>0</span><span>+0.5</span></div><span></span></div>
+          <div class="chart" data-chart="p1" data-rows='[["Llama",15],["Tonic",5,"tonic"],["GPT-2",-8],["Original",-11,"orig"]]'></div>
+          <div class="axis"><span></span><div><span>−50</span><span>0</span><span>+50</span></div><span></span></div>
           <p class="small" style="margin-top: 12px">About 165 votes per version and format.</p>
         </div>
       </div>
@@ -343,9 +344,6 @@ footer a { color: var(--muted); }
     <article class="finding reveal">
       <div class="kicker">Part 2 · Did it change?</div>
       <h3>Most of the time, you heard the change, and in the right direction</h3>
-      <div class="text">
-        <p>Across every model and every kind of change, here's how the answers split:</p>
-      </div>
       <div class="big-stack" role="img" aria-label="60% heard the requested change, 20% heard the opposite, 20% heard no difference">
         <div class="r" style="--w: 60%">60%<small>right direction</small></div>
         <div class="w" style="--w: 20%">20%<small>opposite</small></div>
@@ -353,17 +351,18 @@ footer a { color: var(--muted); }
       </div>
       <div class="split" style="margin-top: 26px">
         <div class="text">
-          <p>When you did hear a change, the right direction beat the wrong one three to one. Overall Tonic and the other methods were heard equally often (58% and 61%).</p>
-          <p>Loudness was Tonic's clearest change: 81% of answers got it right. Its weakest was pitch with Anticipation, where most of you heard no difference or the opposite one.</p>
-          <p>In general, changes were easier to hear with REMI than with Anticipation, whichever model did the steering.</p>
+          <p><b>Tonic and the other methods:</b> heard about equally often (58% and 61%).</p>
+          <p><b>Tonic's best:</b> piano ↔ forte, right 81% of the time.</p>
+          <p><b>Tonic's weakest:</b> low ↔ high with Anticipation.</p>
+          <p><b>Overall:</b> changes were easier to hear with REMI.</p>
         </div>
         <div>
           <div class="chart" data-chart="p2" data-rows='[
-            ["Louder / softer","REMI",[81,8,11],[58,9,33]],
-            ["Note length","REMI",[63,33,4],[66,24,10]],
-            ["Higher / lower","REMI",[59,12,29],[68,17,15]],
-            ["Note length","Anticipation",[62,8,30],[46,35,19]],
-            ["Higher / lower","Anticipation",[24,36,40],[59,23,18]]]'></div>
+            ["Piano ↔ forte","REMI",[81,8,11],[58,9,33]],
+            ["Staccato ↔ legato","REMI",[63,33,4],[66,24,10]],
+            ["Low ↔ high","REMI",[59,12,29],[68,17,15]],
+            ["Staccato ↔ legato","Anticipation",[62,8,30],[46,35,19]],
+            ["Low ↔ high","Anticipation",[24,36,40],[59,23,18]]]'></div>
           <div class="legend"><span><i style="background:var(--right)"></i>right direction</span><span><i style="background:var(--wrong)"></i>opposite</span><span><i style="background:var(--none)"></i>no difference</span></div>
         </div>
       </div>
@@ -372,19 +371,19 @@ footer a { color: var(--muted); }
     <!-- Heard vs measured -->
     <article class="finding reveal">
       <div class="kicker">Part 2 · A closer look</div>
-      <h3>Loudness and pitch are easy to hear. Note length is trickier</h3>
+      <h3>When the music really changed, you heard it</h3>
       <div class="split">
         <div class="text">
-          <p>For every clip I also know how much the music actually changed. For loudness and pitch, your ears followed the numbers: when a steered clip had really moved, about three in four answers heard it move the right way. When it hadn't, most of you didn't hear it move either.</p>
-          <p>Note length didn't line up. You often heard a change, but how big it sounded had nothing to do with how much my measure of note length changed. That measure averages over every note, drums included, and that isn't what makes music sound short and detached or long and smooth. Something to fix in the future.</p>
+          <p>For piano ↔ forte and low ↔ high, your ears matched the measurements: real changes were heard about three times out of four.</p>
+          <p>Staccato ↔ legato didn't match. My measure of note length doesn't capture what you hear, something to fix in the future.</p>
         </div>
         <div>
           <p class="chart-title">REMI · heard in the right direction</p>
           <div class="compare">
-            <div><b style="color:var(--green)">73%</b><span>loudness, when the clip really got louder or softer</span></div>
-            <div><b style="color:var(--faint)">18%</b><span>loudness, when it didn't</span></div>
-            <div><b style="color:var(--green)">72%</b><span>pitch, when the clip really moved up or down</span></div>
-            <div><b style="color:var(--faint)">32%</b><span>pitch, when it didn't</span></div>
+            <div><b style="color:var(--green)">73%</b><span>piano ↔ forte, when it really changed</span></div>
+            <div><b style="color:var(--faint)">18%</b><span>when it didn't</span></div>
+            <div><b style="color:var(--green)">72%</b><span>low ↔ high, when it really changed</span></div>
+            <div><b style="color:var(--faint)">32%</b><span>when it didn't</span></div>
           </div>
         </div>
       </div>
@@ -396,27 +395,27 @@ footer a { color: var(--muted); }
       <h3>Steering didn't cost much musicality</h3>
       <div class="split">
         <div class="text">
-          <p>When the steered versions of different models were played side by side, none of them clearly won. Tonic sat in the middle with both formats.</p>
-          <p>The one that did best, by a small margin, was GPT-2 with "write many, keep the closest". That method never changes how the music is written. It just picks one of many ordinary versions. Since it wasn't clearly preferred over the ones steered while writing, steering doesn't seem to make the music much worse.</p>
+          <p>No steered version clearly won. Tonic sat in the middle with both formats.</p>
+          <p>The narrow leader, GPT-2 with "write many, keep the closest", doesn't change how the music is written. Since it wasn't clearly preferred, steering while writing doesn't seem to hurt much.</p>
         </div>
         <div>
           <p class="chart-title">REMI</p>
           <div class="rank">
-            <div><span>GPT-2 · write many, keep closest</span><span>+0.15</span></div>
-            <div><span>Llama · nudging A</span><span>+0.10</span></div>
-            <div><span>Llama · nudging B</span><span>+0.05</span></div>
-            <div><span>Llama · write many, keep closest</span><span>−0.05</span></div>
-            <div class="tonic"><span>Tonic</span><span>−0.05</span></div>
-            <div><span>GPT-2 · nudging</span><span>−0.12</span></div>
+            <div><span>GPT-2 · write many, keep closest</span><span>+15</span></div>
+            <div><span>Llama · nudging A</span><span>+10</span></div>
+            <div><span>Llama · nudging B</span><span>+5</span></div>
+            <div><span>Llama · write many, keep closest</span><span>−5</span></div>
+            <div class="tonic"><span>Tonic</span><span>−5</span></div>
+            <div><span>GPT-2 · nudging</span><span>−12</span></div>
           </div>
           <p class="chart-title" style="margin-top: 22px">Anticipation</p>
           <div class="rank">
-            <div><span>GPT-2 · write many, keep closest</span><span>+0.16</span></div>
-            <div><span>Llama · write many, keep closest</span><span>+0.02</span></div>
-            <div class="tonic"><span>Tonic</span><span>+0.01</span></div>
-            <div><span>Llama · nudging</span><span>−0.30</span></div>
+            <div><span>GPT-2 · write many, keep closest</span><span>+16</span></div>
+            <div><span>Llama · write many, keep closest</span><span>+2</span></div>
+            <div class="tonic"><span>Tonic</span><span>+1</span></div>
+            <div><span>Llama · nudging</span><span>−30</span></div>
           </div>
-          <p class="small" style="margin-top: 12px">Same score as Part 1. Differences under about 0.15 are within the noise.</p>
+          <p class="small" style="margin-top: 12px">Same score as Part 1. Gaps under about 15 are within the noise.</p>
         </div>
       </div>
     </article>
@@ -427,9 +426,9 @@ footer a { color: var(--muted); }
       <h3>Steered Tonic rarely sounded harsh</h3>
       <div class="split">
         <div class="text">
-          <p>In Part 2 you heard each model plain and steered, so we can see how often steering made you tick the box. For Tonic it went up by 2 to 6 points; for the nudging methods, by 7 to 14.</p>
-          <p>Steered Tonic was ticked in 7% of cases with REMI and 6% with Anticipation, the lowest of all models with both formats. The numbers per model are small, so read it as a tendency rather than a ranking.</p>
-          <p>And the box did its job: 74% of you flagged the clip that was steered into near-noise.</p>
+          <p><b>Tonic:</b> ticked in 6–7% of steered clips, the lowest of all models.</p>
+          <p><b>Nudging methods:</b> up to 17%.</p>
+          <p><b>The box worked:</b> 74% of you flagged the clip steered into near-noise.</p>
         </div>
         <div>
           <p class="chart-title">REMI · % ticked, plain → steered</p>
@@ -448,15 +447,15 @@ footer a { color: var(--muted); }
       <h3>Musicians and non-musicians heard the same things</h3>
       <div class="split">
         <div class="text">
-          <p>Whether you had no musical training or a music degree made no reliable difference to the answers. Both groups heard the steering in the right direction 59% of the time.</p>
-          <p>If anything, the listeners with the most training were a bit sharper: 89% of them flagged the near-noise clip, against 61% of those without training, and all of them spotted the identical pair.</p>
+          <p>Both groups heard the steering right 59% of the time.</p>
+          <p>Trained ears were a bit sharper at spotting the near-noise clip.</p>
         </div>
         <div>
           <div class="people" id="people" aria-label="20 with no training, 23 with some, 10 with extensive training, 1 did not say"></div>
           <div class="legend" style="margin-top: 0"><span><i style="background:#3a3a52"></i>no training · 20</span><span><i style="background:#a9a9c4"></i>some · 23</span><span><i style="background:var(--amber)"></i>extensive · 10</span><span><i style="box-shadow:inset 0 0 0 1px var(--faint)"></i>didn't say · 1</span></div>
           <div class="compare">
-            <div><b style="color:var(--amber)">89%</b><span>of listeners with extensive training flagged the near-noise clip</span></div>
-            <div><b>61%</b><span>of listeners without training did</span></div>
+            <div><b style="color:var(--amber)">89%</b><span>extensive training: flagged the near-noise clip</span></div>
+            <div><b>61%</b><span>no training</span></div>
           </div>
         </div>
       </div>
@@ -483,16 +482,16 @@ footer a { color: var(--muted); }
 <script>
 (() => {
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  const sign = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(2);
+  const sign = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v);
 
   // Equalizer bars
   document.querySelector(".eq").innerHTML = Array.from({ length: 28 }, (_, i) => `<span style="--i:${i}"></span>`).join("");
 
-  // Part 1: diverging bars, scale ±0.5
+  // Part 1: diverging bars, net votes per 100, scale ±50
   document.querySelectorAll('[data-chart="p1"]').forEach((el) => {
     el.innerHTML = JSON.parse(el.dataset.rows).map(([name, v, cls]) =>
       `<div class="div-row ${cls || ""}"><span class="lab">${esc(name)}</span>` +
-      `<div class="div-track"><div class="div-bar ${v >= 0 ? "pos" : "neg"}" style="--v:${Math.abs(v) / 0.5}"></div></div>` +
+      `<div class="div-track"><div class="div-bar ${v >= 0 ? "pos" : "neg"}" style="--v:${Math.abs(v) / 50}"></div></div>` +
       `<span class="val">${sign(v)}</span></div>`).join("");
   });
 
