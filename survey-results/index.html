@@ -192,12 +192,7 @@ h3 { margin: 0 0 6px; font: 700 20px/1.25 var(--font); letter-spacing: -.02em; }
 .compare b { display: block; font: 800 28px/1 var(--font); letter-spacing: -.03em; }
 .compare span { font-size: 13px; color: var(--faint); }
 
-/* Caveat + outro */
-.caveat { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; padding: 24px; border-radius: 18px; background: rgba(240, 185, 85, .06); border: 1px solid rgba(240, 185, 85, .25); }
-.caveat .ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: rgba(240, 185, 85, .14); color: var(--amber); font: 800 20px var(--font); }
-.caveat p { color: #d8d3c2; margin: 0 0 10px; } .caveat p:last-child { margin: 0; }
-.caveat h3 { color: var(--amber); }
-@media (max-width: 600px) { .caveat { grid-template-columns: minmax(0, 1fr); } }
+/* Outro */
 
 .links { display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 860px) { .links { grid-template-columns: minmax(0, 1fr); } }
@@ -227,7 +222,7 @@ footer a { color: var(--muted); }
 <nav class="topbar">
   <div class="wrap">
     <a class="back" href="../">← <b>Tonic</b></a>
-    <div class="toc"><a href="#what">The survey</a><a href="#results">Results</a><a href="#caveat">Fine print</a></div>
+    <div class="toc"><a href="#what">The survey</a><a href="#results">Results</a></div>
   </div>
 </nav>
 
@@ -458,24 +453,12 @@ footer a { color: var(--muted); }
     </article>
   </section>
 
-  <!-- ─────────────── Caveat ─────────────── -->
-  <section class="wrap" id="caveat">
-    <div class="caveat reveal">
-      <div class="ic">!</div>
-      <div>
-        <h3>Before you quote this</h3>
-        <p>I picked the clips by ear, for every model alike, keeping the ones that sounded most convincing. So the survey shows what each model can do at its best, and whether people hear the change. It doesn't say which model is better on average; that's what the measurements in the thesis are for.</p>
-        <p>58 people is also a modest number. Small differences between single models, a few percentage points here and there, could easily go the other way with a different group of listeners.</p>
-      </div>
-    </div>
-  </section>
-
   <section class="wrap">
     <div class="shead reveal"><span class="num">03</span><h2>Keep listening</h2></div>
     <div class="links reveal">
-      <a class="link" style="--c: var(--violet)" href="https://rebeccaceccatelli.github.io/music_EBT/" target="_blank" rel="noopener"><b>Showcase</b><span>Hand-picked examples, this time with the names showing.</span><span class="go">Open the showcase</span></a>
-      <a class="link" style="--c: var(--cyan)" href="https://rebeccaceccatelli.github.io/listening-archive/" target="_blank" rel="noopener"><b>Listening Archive</b><span>Every clip from the final experiments, picked or not.</span><span class="go">Browse the archive</span></a>
-      <a class="link" style="--c: var(--green)" href="https://rebeccaceccatelli.github.io/listening-study/survey/" target="_blank" rel="noopener"><b>The survey</b><span>Still open. You now know some of the answers, but your ears might disagree.</span><span class="go">Take the survey</span></a>
+      <a class="link" style="--c: var(--violet)" href="https://rebeccaceccatelli.github.io/music_EBT/" target="_blank" rel="noopener"><b>Showcase</b><span>Selected tracks, this time with the names showing.</span><span class="go">Open the showcase</span></a>
+      <a class="link" style="--c: var(--cyan)" href="https://rebeccaceccatelli.github.io/listening-archive/" target="_blank" rel="noopener"><b>Listening Archive</b><span>Every clip from the final experiments.</span><span class="go">Browse the archive</span></a>
+      <a class="link" style="--c: var(--green)" href="https://rebeccaceccatelli.github.io/listening-study/survey/" target="_blank" rel="noopener"><b>The survey</b><span>Still open. The questions are drawn at random, so you'll likely hear different clips than last time. Do your ears agree with the results?</span><span class="go">Take the survey</span></a>
     </div>
   </section>
 </main>
