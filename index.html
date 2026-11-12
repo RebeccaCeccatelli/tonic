@@ -83,6 +83,11 @@ h1 { margin: 26px 0 0; font: 900 clamp(84px, 17vw, 188px)/.86 var(--font); lette
 .lede { margin: 16px 0 0; max-width: 60ch; color: var(--muted); font-size: 17px; }
 .lede b { color: var(--text); font-weight: 600; }
 .lede + .lede { margin-top: 10px; }
+.explain-link { margin: 14px 0 0; font: 600 15px var(--font); }
+.explain-link a { color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(90, 209, 230, .35); padding-bottom: 2px; transition: color .2s, border-color .2s; }
+.explain-link a:hover { color: #fff; border-color: #fff; }
+.explain-link a span { display: inline-block; transition: transform .2s; }
+.explain-link a:hover span { transform: translateX(3px); }
 .byline { margin: 26px 0 0; display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 14px; color: var(--muted); }
 .byline b { color: var(--text); font-weight: 600; }
 .byline .who { flex-basis: 100%; }
@@ -205,6 +210,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: 
     <p class="thesis-title">Energy-Based Transformers for Symbolic Music Generation and Single- and Multi-Attribute Control</p>
     <p class="lede">Most AI models write music by picking each next step outright. Tonic drafts it first, scores how well it fits with an <b>energy</b>, and improves it.</p>
     <p class="lede">Add a musical goal to that same energy, and Tonic <b>steers</b> toward it: louder, longer or higher notes. We compare it with traditional models of the same size, trained on the same music.</p>
+    <p class="explain-link"><a data-link="howItWorks" href="#">Curious how it works? Here it is, simply explained <span aria-hidden="true">→</span></a></p>
     <div class="byline">
       <span class="who"><b>Rebecca Ceccatelli</b></span>
       <span>Supervised by Prof. Dr. Roger Wattenhofer (ETH) · Prof. Joseph A. Paradiso (MIT)</span>
