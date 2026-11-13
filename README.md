@@ -1,7 +1,7 @@
 # Tonic
 
-Front page for the Tonic master's thesis (*Towards Controllable Symbolic Music Generation with Energy-Based
-Transformers*, MIT Media Lab × ETH Zürich): showcase, interactive demo, Listening Archive, listening survey,
+Front page for the Tonic master's thesis (*Tonic: Energy-Based Transformers for Symbolic Music Generation and
+Single- and Multi-Attribute Control*, MIT Media Lab × ETH Zürich, November 2026): showcase, interactive demo, Listening Archive, listening survey,
 thesis and code.
 
 Live: https://rebeccaceccatelli.github.io/tonic/
@@ -14,8 +14,8 @@ commit; GitHub Pages republishes within a minute.
 - **Hosted interactive demo:** `bash demo/launch_demo.sh --share` prints a `https://….gradio.live` URL that
   lives up to 7 days (while the demo keeps running). Put it in `demoHosted` and the launch time in `demoHostedStarted`
   (e.g. `"2026-11-12T14:00:00+01:00"`). The card shows "Live until …" and switches itself off when it expires.
-- **Thesis:** put the PDF's URL in `thesisPdf` (for example a release asset of this repo); the "coming soon"
-  labels turn into links.
+- **Thesis:** `thesisPdf` points to `thesis/Tonic_thesis.pdf` in this repo (the public copy, without the signed
+  declaration). To update it, replace that file; if `thesisPdf` is empty, the buttons show "coming soon".
 - **Survey:** the card says "Open" and has no closing date (answers are always welcome).
 
 ## Survey results page
