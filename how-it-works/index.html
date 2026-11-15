@@ -449,15 +449,16 @@ const CLIPS = {"orig":{"audio":"https://rebeccaceccatelli.github.io/music_EBT/au
       goalT.setAttribute("x", w > 0 ? sx(.8) : sx(.2));
       draw();
     }
-    async function roll(x, steps, onStep) {
-      trail.innerHTML = ""; place(x); await sleep(500);
+    async function roll(x, steps, onStep, pace = {}) {
+      const { start = 500, move = 22, hold = 600 } = pace;
+      trail.innerHTML = ""; place(x); await sleep(start);
       for (let k = 0; k < steps; k++) {
         el("circle", { class: "trail", r: 4, cx: sx(x), cy: toY(E(x)) - 9 }, trail);
         const g = (E(x + 1e-3) - E(x - 1e-3)) / 2e-3;
         const target = Math.min(.98, Math.max(.02, x - .18 * g));
         const from = x, n = reduce ? 1 : 24;
-        for (let i = 1; i <= n; i++) { x = from + (target - from) * (i / n); place(x); await sleep(22); }
-        onStep && onStep(k + 1); await sleep(600);
+        for (let i = 1; i <= n; i++) { x = from + (target - from) * (i / n); place(x); await sleep(move); }
+        onStep && onStep(k + 1); await sleep(hold);
       }
       return x;
     }
@@ -474,7 +475,7 @@ const CLIPS = {"orig":{"audio":"https://rebeccaceccatelli.github.io/music_EBT/au
   async function runEbt() {
     if (ebtBusy) return; ebtBusy = true;
     stage(0); ebtSet(DRAFTS[0], -1);
-    await L1.roll(.08, 4, (k) => { const s = Math.min(k, 2); stage(Math.min(k, 2)); ebtSet(DRAFTS[s], -1); });
+    await L1.roll(.08, 4, (k) => { const s = Math.min(k, 2); stage(Math.min(k, 2)); ebtSet(DRAFTS[s], -1); }, { start: 1500, move: 40, hold: 1700 });
     stage(3); ebtSet(DRAFTS[2], 2); ebtBusy = false;
   }
   document.getElementById("ebt-play").onclick = runEbt;
