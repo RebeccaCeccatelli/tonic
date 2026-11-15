@@ -260,7 +260,7 @@ footer a { color: var(--muted); }
 
   <!-- 4 -->
   <section class="chapter wrap" id="c4">
-    <div class="ch-head reveal"><span class="ch-num">04</span><h2>Steering with the same energy</h2><p>Add a wish to the landscape, and the music rolls toward it.</p></div>
+    <div class="ch-head reveal"><span class="ch-num">04</span><h2>Tilting the landscape</h2><p>Add a wish to the landscape, and the music rolls toward it.</p></div>
     <div class="prose reveal">
       <p>Here's the idea at the heart of the thesis. The energy is just a number Tonic tries to make small, so we can <b>add our own wish to it</b>. A small helper model listens for one musical feature, say loudness, and adds a penalty whenever the draft sounds further from what we asked for.</p>
       <p>The landscape tilts. Tonic still looks for the lowest point, but that point now sits where the music is louder (or softer, or higher, or has longer notes). Tonic itself doesn't need to be retrained, and a dial sets how strongly the wish counts.</p>
@@ -430,7 +430,7 @@ const CLIPS = {"orig":{"audio":"https://rebeccaceccatelli.github.io/music_EBT/au
     const area = el("path", { class: "area" }, svg), curve = el("path", { class: "curve" }, svg);
     el("text", { x: X0, y: 16 }, svg).textContent = "high energy: doesn't fit";
     const lowT = el("text", { x: X1, y: 214, "text-anchor": "end" }, svg); lowT.textContent = "low energy: fits";
-    const goalT = el("text", { class: "goal", y: 16, "text-anchor": "middle" }, svg);
+    const goalT = el("text", { class: "goal", y: 38 }, svg); // own line, below the "high energy" label
     const trail = el("g", {}, svg), ball = el("circle", { class: "ball", r: 9 }, svg);
     let E = base;
     const sx = (x) => X0 + x * (X1 - X0);
@@ -446,7 +446,7 @@ const CLIPS = {"orig":{"audio":"https://rebeccaceccatelli.github.io/music_EBT/au
       let m = Infinity; for (let i = 0; i <= 200; i++) m = Math.min(m, raw(i / 200));
       E = (x) => raw(x) - m + .04;
       goalT.textContent = w > 0 ? "wish: louder →" : w < 0 ? "← wish: softer" : "";
-      goalT.setAttribute("x", w > 0 ? sx(.8) : sx(.2));
+      goalT.setAttribute("x", w > 0 ? X1 : X0); goalT.setAttribute("text-anchor", w > 0 ? "end" : "start");
       draw();
     }
     async function roll(x, steps, onStep, pace = {}) {
