@@ -106,6 +106,7 @@ h1 { margin: 22px 0 0; font: 900 clamp(52px, 10vw, 116px)/.92 var(--font); lette
 .land .trail { fill: var(--violet); opacity: .45; }
 .land text { font: 600 12px var(--mono); fill: var(--faint); }
 .land .goal { fill: var(--coral); font-weight: 700; }
+.land .axis { fill: var(--muted); }
 
 /* Players */
 .players { display: grid; gap: 14px; }
@@ -270,7 +271,7 @@ footer a { color: var(--muted); }
       <div class="split">
         <div>
           <p class="cap">Pick a wish</p>
-          <svg class="land" id="land2" viewBox="0 0 420 220" role="img" aria-label="The energy landscape tilts toward the chosen goal"></svg>
+          <svg class="land" id="land2" viewBox="0 0 420 242" role="img" aria-label="The energy landscape tilts toward the chosen goal"></svg>
           <div class="step-row" id="wish">
             <button class="btn" type="button" data-w="-1">Shorter notes</button>
             <button class="btn sel" type="button" data-w="0">No wish</button>
@@ -424,13 +425,17 @@ const CLIPS = {"orig":{"audio":"https://rebeccaceccatelli.github.io/music_EBT/au
   /* Energy landscape (shared by 3 and 4) */
   const W = 420, H = 220, X0 = 20, X1 = 400, Y0 = 30, Y1 = 190;
   const base = (x) => 1.4 * (x - .42) ** 2 + .05 * Math.sin(x * 14) + .06;
-  function landscape(svgId, wishFn) {
+  function landscape(svgId, wishFn, axis) {
     const svg = document.getElementById(svgId);
     svg.innerHTML = `<defs><linearGradient id="eg" x1="0" x2="1"><stop offset="0" stop-color="#5ad1e6"/><stop offset="1" stop-color="#8b7cff"/></linearGradient>
       <linearGradient id="ef" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#8b7cff" stop-opacity=".35"/><stop offset="1" stop-color="#8b7cff" stop-opacity="0"/></linearGradient></defs>`;
     const area = el("path", { class: "area" }, svg), curve = el("path", { class: "curve" }, svg);
     el("text", { x: X0, y: 16 }, svg).textContent = "high energy: doesn't fit";
     const lowT = el("text", { x: X1, y: 214, "text-anchor": "end" }, svg); lowT.textContent = "low energy: fits";
+    if (axis) { // what left and right mean, on its own row below the landscape
+      el("text", { class: "axis", x: X0, y: 238 }, svg).textContent = "← " + axis[0];
+      el("text", { class: "axis", x: X1, y: 238, "text-anchor": "end" }, svg).textContent = axis[1] + " →";
+    }
     const goalT = el("text", { class: "goal", y: 38 }, svg); // own line, below the "high energy" label
     const trail = el("g", {}, svg), ball = el("circle", { class: "ball", r: 9 }, svg);
     let E = base;
@@ -481,7 +486,7 @@ const CLIPS = {"orig":{"audio":"https://rebeccaceccatelli.github.io/music_EBT/au
   }
   document.getElementById("ebt-play").onclick = runEbt;
 
-  const L2 = landscape("land2");
+  const L2 = landscape("land2", 0, ["shorter notes", "longer notes"]);
   let rolling = false;
   document.querySelectorAll("#wish .btn").forEach((b) => b.onclick = async () => {
     document.querySelectorAll("#wish .btn").forEach((x) => x.classList.toggle("sel", x === b));
