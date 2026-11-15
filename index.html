@@ -32,6 +32,7 @@ const LINKS = {
   // `bash demo/launch_demo.sh --share`; it lives up to 7 days from `demoHostedStarted` (while the demo keeps running).
   demoHosted:        "https://13507a1d166f8fe32d.gradio.live",  // e.g. "https://0123abcd4567.gradio.live"
   demoHostedStarted: "2026-11-15T19:43:37+01:00",  // when it was launched, e.g. "2026-11-12T14:00:00+01:00"
+  demoHostedUntil:   "2026-11-15T22:43:37+01:00",  // optional: when the job running it ends (Slurm time limit), if before the 7 days
   demoLocal: "http://localhost:7860",
   // Where the sites themselves are kept
   repos: {
@@ -341,7 +342,9 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: 
   // Interactive demo: a hosted gradio.live link is valid for up to 7 days (Gradio 6: "up to 1 week, best effort").
   const badge = document.getElementById("demo-badge"), note = document.getElementById("demo-note"), hosted = document.getElementById("demo-hosted");
   const started = L.demoHostedStarted ? new Date(L.demoHostedStarted) : null;
-  const until = started && !isNaN(started) ? new Date(started.getTime() + 7 * 24 * 3600e3) : null;
+  let until = started && !isNaN(started) ? new Date(started.getTime() + 7 * 24 * 3600e3) : null;
+  const jobEnd = L.demoHostedUntil ? new Date(L.demoHostedUntil) : null;
+  if (jobEnd && !isNaN(jobEnd) && (!until || jobEnd < until)) until = jobEnd;
   if (L.demoHosted && (!until || until > new Date())) {
     hosted.href = L.demoHosted;
     badge.className = "badge live"; badge.textContent = "Live";
